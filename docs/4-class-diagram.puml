@@ -1,0 +1,132 @@
+@startuml
+skinparam classAttributeIconSize 0
+scale 1
+
+' --- DEFINISI KELAS ---
+
+class User {
+    +idUser : int
+    +username : string
+    +password : string
+    +namaLengkap : string
+    +role : string
+    --
+    ' Role values: "pendaftaran", "dokter", "apoteker", 
+    ' "kepala Puskesmas", "admin"
+}
+
+class Pasien {
+    +idPasien : int
+    +noRM : string
+    +nik : string
+    +nama : string
+    +alamat : string
+    +tglLahir : date
+    +noBPJS : string
+}
+
+class Kunjungan {
+    +idKunjungan : int
+    +tglKunjungan : datetime
+    +status : string
+    +keluhanAwal : string
+}
+
+class Poli {
+    +idPoli : int
+    +namaPoli : string
+    +lokasi : string
+}
+
+class RekamMedis {
+    +idRekamMedis : int
+    +tglPeriksa : datetime
+    +keluhan : text
+    +diagnosa : string
+    +tandaVital : string
+    +tindakan : text
+}
+
+class Resep {
+    +idResep : int
+    +tglResep : datetime
+    +status : string
+    +catatan : text
+}
+
+class DetailResep {
+    +idDetail : int
+    +jumlah : int
+    +dosis : string
+}
+
+class Obat {
+    +idObat : int
+    +namaObat : string
+    +jenis : string
+    +stok : int
+    +harga : decimal
+}
+
+class Pembayaran {
+    +idPembayaran : int
+    +tglBayar : datetime
+    +totalBiaya : decimal
+    +metodeBayar : string
+    +status : string
+}
+
+class KlaimBPJS {
+    +idKlaim : int
+    +noSEP : string
+    +statusKlaim : string
+    +tglPengajuan : date
+}
+
+class Laporan {
+    ' Kelas representasi untuk modul laporan
+    +periode : string
+    +jenisLaporan : string
+}
+
+' --- RELASI ANTAR KELAS UTAMA (Sesuai Poin D.1 & D.2 Akhir) ---
+
+Pasien "1" -- "0..*" Kunjungan : Melakukan >
+Kunjungan "0..*" -- "1" Poli : Menuju >
+
+' Satu kunjungan menghasilkan satu rekam medis
+Kunjungan "1" -- "0..1" RekamMedis : Memiliki >
+
+' Satu kunjungan bisa memiliki tagihan pembayaran atau klaim BPJS
+Kunjungan "1" -- "0..1" Pembayaran : Tagihan >
+Kunjungan "1" -- "0..1" KlaimBPJS : Klaim >
+
+' Rekam Medis terkait dengan Resep (Dokter buat resep saat periksa)
+RekamMedis "1" -- "0..1" Resep : Menghasilkan >
+
+' Detail Resep menghubungkan Resep dan Obat (Many-to-Many via intermediate table)
+Resep "1" -- "1..*" DetailResep : Terdiri dari >
+DetailResep "0..*" -- "1" Obat : Menggunakan >
+
+' --- RELASI USER BERDASARKAN ROLE (Sesuai Poin D.2) ---
+
+' Role: Pendaftaran -> Kunjungan, Pembayaran, KlaimBPJS
+User ..> Kunjungan : <<use>> (Role: Pendaftaran)\nMembuat & Verifikasi
+User ..> Pembayaran : <<use>> (Role: Pendaftaran)\nProses Bayar
+User ..> KlaimBPJS : <<use>> (Role: Pendaftaran)\nTandai Klaim
+
+' Role: Dokter -> Rekam Medis, Resep
+User ..> RekamMedis : <<use>> (Role: Dokter)\nMencatat
+User ..> Resep : <<use>> (Role: Dokter)\nMembuat
+
+' Role: Apoteker -> Resep, Obat
+User ..> Resep : <<use>> (Role: Apoteker)\nMemproses
+User ..> Obat : <<use>> (Role: Apoteker)\nCek Stok/Update
+
+' Role: Kepala Puskesmas -> Laporan
+User ..> Laporan : <<use>> (Role: Ka. Puskesmas)\nMelihat
+
+' Role: Admin -> User (Self relation for management)
+User ..> User : <<use>> (Role: Admin)\nMengelola Data User
+
+@enduml

@@ -1,0 +1,72 @@
+@startuml
+|Pasien|
+start
+:Datang ke Puskesmas;
+:Menuju Loket Pendaftaran;
+|Petugas Pendaftaran|
+:Cek Status Pasien;
+if (Pasien Baru?) then (Ya)
+    :Isi Data Identitas Baru;
+    |Sistem|
+    :Generate No. RM Baru;
+else (Tidak (Pasien Lama))
+    |Petugas Pendaftaran|
+    :Verifikasi Data Pasien Lama;
+endif
+|Petugas Pendaftaran|
+:Tanya Poli & Kepesertaan;
+|Sistem|
+:Simpan Data & Antrean;
+|Petugas Pendaftaran|
+:Cetak Nomor Antrean;
+ if (Status Kepesertaan?) then (Umum)
+    :Status Kunjungan "Umum";
+else (BPJS)
+    :Tandai Klaim BPJS Awal;
+endif
+|Pasien|
+:Menunggu di Ruang Tunggu;
+:Masuk Ruang Pemeriksaan;
+|Dokter|
+:Lihat Data & Rekam Medis;
+:Periksa & Catat Tanda Vital;
+:Diagnosis & Input Rekam Medis;
+if (Perlu Obat?) then (Ya)
+    :Buat Resep Obat;
+    |Pasien|
+    :Menuju Farmasi;
+    |Apoteker|
+    :Ambil Data Resep;
+    :Cek Stok Obat;
+    if (Stok Cukup?) then (Ya)
+        :Siapkan Obat;
+        :Serahkan Obat ke Pasien;
+        |Sistem|
+        :Kurangi Stok Obat;
+    else (Tidak)
+        |Apoteker|
+        :Tandai 'Obat Tidak Lengkap';
+        :Jelaskan ke Pasien;
+    endif
+else (Tidak)
+    ' Langsung kembali ke pendaftaran
+endif
+|Pasien|
+:Kembali ke Loket Pendaftaran;
+|Petugas Pendaftaran|
+:Terima Pembayaran / Verifikasi Final;
+|Sistem|
+:Hitung Total Biaya Akhir;
+if (Status Pasien?) then (Umum)
+    |Petugas Pendaftaran|
+    :Terima Bayar Tunai & Update Lunas;
+else (BPJS)
+    |Petugas Pendaftaran|
+    :Tandai Klaim BPJS Final;
+endif
+|Sistem|
+:Simpan Laporan Kunjungan;
+|Pasien|
+:Meninggalkan Puskesmas;
+stop
+@enduml

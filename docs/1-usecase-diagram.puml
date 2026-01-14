@@ -1,0 +1,99 @@
+@startuml
+|Pasien|
+start
+:Datang ke Puskesmas & Menuju Loket;
+
+|Petugas Pendaftaran|
+:Cek Status Pasien;
+' Decision Node: Pasien Baru vs Lama (Sesuai PDF Poin 2)
+if (Pasien Baru?) then (Ya)
+    :Input Data Identitas;
+    |Sistem|
+    :Buat No. RM Baru;
+else (Tidak (Pasien Lama))
+    |Sistem|
+    :Cari Data Pasien;
+    |Petugas Pendaftaran|
+    :Verifikasi Data (Alamat/Kontak);
+endif
+
+|Petugas Pendaftaran|
+:Tanyakan Poli Tujuan;
+|Sistem|
+:Daftarkan Kunjungan ke Poli;
+|Petugas Pendaftaran|
+:Cetak Nomor Antrean;
+
+' Decision Node: Umum vs BPJS (Sesuai PDF Poin 4)
+if (Status Kepesertaan?) then (Umum)
+    |Sistem|
+    :Set Status Kunjungan "Umum";
+else (BPJS)
+    |Petugas Pendaftaran|
+    :Input Nomor BPJS;
+    |Sistem|
+    :Tandai "Klaim BPJS";
+endif
+
+|Pasien|
+:Menunggu di Ruang Tunggu;
+:Masuk Ruang Pemeriksaan;
+
+|Sistem|
+:Tampilkan Data Identitas & Riwayat;
+
+|Dokter|
+:Periksa Pasien;
+:Catat Tanda Vital, Keluhan, Diagnosis;
+|Sistem|
+:Simpan Rekam Medis;
+
+' Decision Node: Perlu Obat? (Sesuai PDF Poin 7)
+|Dokter|
+if (Perlu Obat?) then (Ya)
+    :Buat Resep Obat di Sistem;
+else (Tidak)
+    ' Tidak ada aksi resep
+endif
+
+' Proses Pembayaran/Admin (Sesuai PDF Poin 8 - Dilakukan setelah periksa)
+|Sistem|
+:Hitung Biaya Layanan;
+
+|Petugas Pendaftaran|
+if (Status Pasien?) then (Umum)
+    :Terima Pembayaran Tunai;
+    |Sistem|
+    :Catat Status "Lunas";
+else (BPJS)
+    |Sistem|
+    :Tandai Klaim BPJS Final;
+endif
+
+' Alur Farmasi (Sesuai PDF Poin 9-10)
+|Pasien|
+:Menuju Farmasi;
+
+|Apoteker|
+:Ambil Data Resep dari Sistem;
+:Cek Stok Obat;
+
+' Decision Node: Stok Cukup? (Sesuai PDF Poin 10)
+if (Stok Cukup?) then (Ya)
+    :Siapkan Obat;
+    :Serahkan Obat ke Pasien;
+    |Sistem|
+    :Kurangi Stok Obat;
+else (Tidak)
+    |Apoteker|
+    :Tandai Resep "Obat Tidak Lengkap";
+    :Jelaskan ke Pasien;
+endif
+
+|Pasien|
+:Meninggalkan Puskesmas;
+
+|Sistem|
+:Simpan Data Kunjungan (Untuk Laporan);
+stop
+@enduml
