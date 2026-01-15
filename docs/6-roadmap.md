@@ -12,16 +12,16 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 📅 Tahap 1: Inisialisasi & Konfigurasi (Foundation)
 *Tujuan: Menyiapkan lingkungan kerja agar siap coding.*
 
-- [ ] **Setup Project Laravel**
+- [x] **Setup Project Laravel**
     - `composer create-project laravel/laravel SI-PUSKES`
     - `cd SI-PUSKES`
-- [ ] **Install Dependencies**
+- [x] **Install Dependencies**
     - `composer require livewire/livewire`
     - `npm install tailwindcss @tailwindcss/vite`
-- [ ] **Konfigurasi Database**
+- [x] **Konfigurasi Database**
     - Buat database MySQL: `si_puskes`
     - Setup file `.env` (DB_DATABASE, DB_USERNAME, dll)
-- [ ] **Setup Layout Utama**
+- [x] **Setup Layout Utama**
     - Buat Layout Base (`resources/views/layouts/app.blade.php`)
     - Integrasi Tailwind (`@tailwind` directives di CSS)
     - Buat Sidebar & Navbar Component
@@ -32,21 +32,21 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 *Tujuan: Menerjemahkan Class Diagram menjadi tabel database.*
 *Hint: Gunakan `php artisan make:model NamaModel -m`*
 
-- [ ] **Tabel Users & Autentikasi**
+- [x] **Tabel Users & Autentikasi**
     - Modifikasi tabel `users`: Tambah kolom `role`, `username`.
-- [ ] **Tabel Master Data (Referensi)**
+- [x] **Tabel Master Data (Referensi)**
     - Tabel `polis`: `nama_poli`, `lokasi`, `tarif_dasar`.
     - Tabel `obats`: `nama_obat`, `stok`, `harga`, `jenis`.
-- [ ] **Tabel Pasien**
+- [x] **Tabel Pasien**
     - Tabel `pasiens`: `no_rm`, `nik`, `nama`, `tgl_lahir`, `alamat`, `no_bpjs`.
-- [ ] **Tabel Transaksi (Core)**
+- [x] **Tabel Transaksi (Core)**
     - Tabel `kunjungans`: FK `pasien_id`, FK `poli_id`, `status`, `keluhan_awal`, `is_bpjs`.
     - Tabel `rekam_medis`: FK `kunjungan_id`, FK `dokter_id`, `diagnosa`, `tindakan`, `tanda_vital`.
     - Tabel `reseps`: FK `rekam_medis_id`, `status`.
     - Tabel `detail_reseps`: FK `resep_id`, FK `obat_id`, `jumlah`, `dosis`.
     - Tabel `pembayarans`: FK `kunjungan_id`, `total_biaya`, `status_bayar`.
     - Tabel `klaim_bpjs`: FK `kunjungan_id`, `no_sep`, `status_klaim`.
-- [ ] **Running Migration**
+- [x] **Running Migration**
     - `php artisan migrate`
 
 ---

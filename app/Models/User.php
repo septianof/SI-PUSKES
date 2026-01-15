@@ -18,7 +18,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'username',
+        'nama_lengkap',
+        'role',
         'email',
         'password',
     ];
@@ -44,5 +46,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the rekam medis records where this user is the dokter.
+     */
+    public function rekamMedis()
+    {
+        return $this->hasMany(RekamMedis::class, 'dokter_id');
     }
 }

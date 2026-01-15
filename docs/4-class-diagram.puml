@@ -36,6 +36,7 @@ class Poli {
     +idPoli : int
     +namaPoli : string
     +lokasi : string
+    +tarifDaftar : decimal
 }
 
 class RekamMedis {
