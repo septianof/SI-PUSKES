@@ -13,11 +13,18 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <!-- Livewire Styles -->
+        @livewireStyles
+
+        <style>
+            [x-cloak] { display: none !important; }
+        </style>
     </head>
     <body class="font-sans antialiased" x-data="{ sidebarOpen: false }">
         <div class="min-h-screen bg-gray-100 flex">
             <!-- Mobile Sidebar Overlay -->
-            <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden"></div>
+            <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden" style="display: none;"></div>
 
             <!-- Sidebar -->
             <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed z-50 inset-y-0 left-0 w-64 bg-white shadow-lg overflow-y-auto transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-auto">
@@ -29,7 +36,7 @@
 
                 <nav class="mt-10 px-4 space-y-2">
                     <!-- Dashboard (Available for all or specific roles if needed) -->
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md">
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dashboard') ? 'bg-gray-200 font-semibold' : '' }}">
                         <span class="font-medium">Dashboard</span>
                     </a>
 
@@ -119,18 +126,33 @@
                     <div class="flex items-center space-x-4">
                         <!-- User Profile -->
                         <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center focus:outline-none">
+                            <button @click="open = !open" class="flex items-center focus:outline-none hover:bg-gray-50 p-2 rounded-md transition-colors">
                                 <span class="mr-2 text-sm font-semibold text-gray-800">{{ Auth::user()->username ?? 'Guest' }}</span>
                                 <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase">{{ Auth::user()->role ?? 'Guest' }}</span>
-                                <svg class="ml-2 h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <svg class="ml-2 h-4 w-4 text-gray-600 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             
                             <!-- Dropdown Menu -->
-                            <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50" style="display: none;">
+                            <div 
+                                x-show="open" 
+                                @click.away="open = false" 
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5" 
+                                x-cloak
+                            >
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-sm text-gray-500">Login sebagai:</p>
+                                    <p class="text-sm font-semibold text-gray-800 truncate">{{ Auth::user()->nama_lengkap ?? Auth::user()->username }}</p>
+                                </div>
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600">
                                         Logout
                                     </button>
                                 </form>
@@ -145,5 +167,8 @@
                 </main>
             </div>
         </div>
+        
+        <!-- Livewire Scripts -->
+        @livewireScripts
     </body>
 </html>
