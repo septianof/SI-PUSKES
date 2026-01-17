@@ -21,4 +21,9 @@ Route::middleware('auth')->group(function () {
         session()->regenerateToken();
         return redirect('/login');
     })->name('logout');
+
+    // Admin Routes - User Management
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');
+    });
 });

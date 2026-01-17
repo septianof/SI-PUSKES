@@ -54,13 +54,13 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 🔐 Tahap 3: Autentikasi & Role Management
 *Tujuan: Memastikan user login sesuai hak akses.*
 
-- [ ] **Fitur Login**
+- [x] **Fitur Login**
     - Buat Livewire Component: `Auth/Login`
     - Logika validasi username & password.
-- [ ] **Middleware / Authorization**
+- [x] **Middleware / Authorization**
     - Buat Middleware `CheckRole`.
     - Pastikan Petugas tidak bisa akses halaman Dokter, dsb.
-- [ ] **Seeding Data (User Dummy)**
+- [x] **Seeding Data (User Dummy)**
     - Buat `DatabaseSeeder` untuk membuat 1 akun Admin, 1 Petugas, 1 Dokter, 1 Apoteker, 1 Kepala Puskesmas (agar bisa tes login).
 
 ---

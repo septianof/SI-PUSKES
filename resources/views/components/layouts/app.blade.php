@@ -45,7 +45,7 @@
                         <div class="pt-4 pb-2">
                             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Admin</p>
                         </div>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('users.*') ? 'bg-gray-200' : '' }}">
+                        <a href="{{ route('users') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('users') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Manajemen User</span>
                         </a>
                         <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('master.*') ? 'bg-gray-200' : '' }}">
