@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('nama_lengkap');
-            $table->enum('role', ['admin', 'pendaftaran', 'dokter', 'apoteker', 'kepala_puskesmas']);
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->enum('role', ['admin', 'pendaftaran', 'dokter', 'apoteker', 'kepala Puskesmas']);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

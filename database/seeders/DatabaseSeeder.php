@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Administrator',
-            'email' => 'admin@sipuskes.com',
             'role' => 'admin',
         ]);
 
@@ -33,7 +32,6 @@ class DatabaseSeeder extends Seeder
             'username' => 'pendaftaran',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Petugas Pendaftaran',
-            'email' => 'pendaftaran@sipuskes.com',
             'role' => 'pendaftaran',
         ]);
 
@@ -42,7 +40,6 @@ class DatabaseSeeder extends Seeder
             'username' => 'dokter1',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Dr. Ahmad Hidayat',
-            'email' => 'dokter1@sipuskes.com',
             'role' => 'dokter',
         ]);
 
@@ -51,7 +48,6 @@ class DatabaseSeeder extends Seeder
             'username' => 'apoteker',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Apt. Siti Nurjanah',
-            'email' => 'apoteker@sipuskes.com',
             'role' => 'apoteker',
         ]);
 
@@ -60,8 +56,7 @@ class DatabaseSeeder extends Seeder
             'username' => 'kepala',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Dr. Budi Santoso, M.Kes',
-            'email' => 'kepala@sipuskes.com',
-            'role' => 'kepala_puskesmas',
+            'role' => 'kepala Puskesmas',
         ]);
     }
 }
