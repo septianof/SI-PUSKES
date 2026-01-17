@@ -48,8 +48,8 @@
                         <a href="{{ route('users') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('users') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Manajemen User</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('master.*') ? 'bg-gray-200' : '' }}">
-                            <span class="font-medium">Data Master</span>
+                        <a href="{{ route('polis') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('polis') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">Data Master Poli</span>
                         </a>
                     @endif
 

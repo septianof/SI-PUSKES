@@ -25,5 +25,6 @@ Route::middleware('auth')->group(function () {
     // Admin Routes - User Management
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');
+        Route::get('/polis', \App\Livewire\Admin\Polis::class)->name('polis');
     });
 });

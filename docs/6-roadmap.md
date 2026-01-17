@@ -68,9 +68,9 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## ⚙️ Tahap 4: Modul Admin & Master Data (CRUD Dasar)
 *Tujuan: Mengisi data awal agar sistem bisa digunakan transaksi.*
 
-- [ ] **CRUD Data User** (Admin)
+- [x] **CRUD Data User** (Admin)
     - Create, Read, Update, Delete User pegawai.
-- [ ] **CRUD Data Poli** (Admin)
+- [x] **CRUD Data Poli** (Admin)
     - Input nama poli dan tarif dasarnya.
 - [ ] **CRUD Data Obat** (Admin/Apoteker)
     - Input stok awal obat dan harga.
