@@ -32,4 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,apoteker')->group(function () {
         Route::get('/obats', \App\Livewire\Admin\Obats::class)->name('obats');
     });
+
+    // Pendaftaran Routes
+    Route::middleware('role:pendaftaran')->group(function () {
+        Route::get('/pendaftaran', \App\Livewire\Pendaftaran\DaftarPasien::class)->name('pendaftaran');
+    });
 });

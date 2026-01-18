@@ -72,7 +72,7 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
     - Create, Read, Update, Delete User pegawai.
 - [x] **CRUD Data Poli** (Admin)
     - Input nama poli dan tarif dasarnya.
-- [ ] **CRUD Data Obat** (Admin/Apoteker)
+- [x] **CRUD Data Obat** (Admin/Apoteker)
     - Input stok awal obat dan harga.
 
 ---
@@ -80,7 +80,7 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 🏥 Tahap 5: Modul Pendaftaran (Front Office)
 *Tujuan: Menangani alur kedatangan pasien.*
 
-- [ ] **Pencarian / Registrasi Pasien**
+- [x] **Pencarian / Registrasi Pasien**
     - Component: `Pendaftaran/CariPasien`
     - Logika: Jika NIK ketemu -> Load Data. Jika tidak -> Form Pasien Baru.
     - Generate No. RM otomatis (misal: 202401-001).
