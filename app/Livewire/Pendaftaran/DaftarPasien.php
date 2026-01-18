@@ -3,6 +3,8 @@
 namespace App\Livewire\Pendaftaran;
 
 use App\Models\Pasien;
+use App\Models\Poli;
+use App\Models\Kunjungan;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -28,6 +30,18 @@ class DaftarPasien extends Component
     public $alamat = '';
     public $no_bpjs = '';
 
+    // Properties untuk Form Kunjungan
+    public $poli_id = '';
+    public $metode_bayar = 'Umum';
+    public $keluhan_awal = '';
+
+    // Data untuk Dropdown
+    public $poliList = [];
+
+    // Status kunjungan berhasil
+    public $kunjunganBerhasil = false;
+    public $noAntrean = null;
+
     // Validation Messages
     protected $messages = [
         'nik.required' => 'NIK wajib diisi.',
@@ -41,7 +55,29 @@ class DaftarPasien extends Component
         'alamat.required' => 'Alamat wajib diisi.',
         'alamat.min' => 'Alamat minimal 10 karakter.',
         'no_bpjs.digits' => 'No BPJS harus 13 digit.',
+        'poli_id.required' => 'Poli wajib dipilih.',
+        'poli_id.exists' => 'Poli yang dipilih tidak valid.',
+        'metode_bayar.required' => 'Metode bayar wajib dipilih.',
+        'metode_bayar.in' => 'Metode bayar harus Umum atau BPJS.',
+        'keluhan_awal.required' => 'Keluhan awal wajib diisi.',
+        'keluhan_awal.min' => 'Keluhan awal minimal 10 karakter.',
     ];
+
+    /**
+     * Mount: Load data Poli saat component dimulai
+     */
+    public function mount()
+    {
+        $this->loadPoliList();
+    }
+
+    /**
+     * Load data Poli untuk dropdown
+     */
+    private function loadPoliList()
+    {
+        $this->poliList = Poli::orderBy('nama_poli', 'asc')->get();
+    }
 
     /**
      * Perform search ketika user mengetik
@@ -94,6 +130,7 @@ class DaftarPasien extends Component
     {
         $this->selectedPasienId = null;
         $this->selectedPasien = null;
+        $this->resetFormKunjungan();
         $this->dispatch('pasien-cleared');
     }
 
@@ -206,6 +243,83 @@ class DaftarPasien extends Component
         $this->alamat = '';
         $this->no_bpjs = '';
         $this->resetValidation();
+    }
+
+    /**
+     * Store Kunjungan Baru
+     */
+    public function storeKunjungan()
+    {
+        // Pastikan pasien sudah dipilih
+        if (!$this->selectedPasienId) {
+            session()->flash('error', 'Silakan pilih pasien terlebih dahulu.');
+            return;
+        }
+
+        // Validation Rules
+        $rules = [
+            'poli_id' => 'required|exists:polis,id',
+            'metode_bayar' => 'required|in:Umum,BPJS',
+            'keluhan_awal' => 'required|min:10',
+        ];
+
+        // Validate Input
+        $this->validate($rules, $this->messages);
+
+        // VALIDASI KHUSUS: Jika metode bayar BPJS, cek no_bpjs pasien
+        if ($this->metode_bayar === 'BPJS') {
+            if (empty($this->selectedPasien->no_bpjs)) {
+                $this->addError('metode_bayar', 'Pasien ini belum memiliki No BPJS. Silakan pilih metode bayar Umum atau update data pasien.');
+                return;
+            }
+        }
+
+        try {
+            // Create Kunjungan
+            $kunjungan = Kunjungan::create([
+                'pasien_id' => $this->selectedPasienId,
+                'poli_id' => $this->poli_id,
+                'tgl_kunjungan' => now(),
+                'status' => 'menunggu',
+                'keluhan_awal' => $this->keluhan_awal,
+            ]);
+
+            // Set status berhasil
+            $this->kunjunganBerhasil = true;
+            $this->noAntrean = $kunjungan->id; // Bisa diganti dengan format nomor antrean custom
+
+            // Flash success message
+            session()->flash('success', 'Pendaftaran kunjungan berhasil! Nomor Antrean: ' . $this->noAntrean);
+
+            // Reset form kunjungan
+            $this->resetFormKunjungan();
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reset Form Kunjungan
+     */
+    private function resetFormKunjungan()
+    {
+        $this->poli_id = '';
+        $this->metode_bayar = 'Umum';
+        $this->keluhan_awal = '';
+        $this->kunjunganBerhasil = false;
+        $this->noAntrean = null;
+        $this->resetValidation(['poli_id', 'metode_bayar', 'keluhan_awal']);
+    }
+
+    /**
+     * Reset untuk pendaftaran baru (clear pasien + form)
+     */
+    public function resetPendaftaran()
+    {
+        $this->clearSelectedPasien();
+        $this->kunjunganBerhasil = false;
+        $this->noAntrean = null;
     }
 
     /**

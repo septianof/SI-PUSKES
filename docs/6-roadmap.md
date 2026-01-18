@@ -84,7 +84,7 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
     - Component: `Pendaftaran/CariPasien`
     - Logika: Jika NIK ketemu -> Load Data. Jika tidak -> Form Pasien Baru.
     - Generate No. RM otomatis (misal: 202401-001).
-- [ ] **Form Kunjungan**
+- [x] **Form Kunjungan**
     - Component: `Pendaftaran/FormKunjungan`
     - Input: Pilih Poli, Pilih Dokter, Ceklis BPJS/Umum.
     - Output: Simpan ke tabel `kunjungans` (Status: `waiting`).

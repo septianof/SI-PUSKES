@@ -110,29 +110,130 @@
             @endif
         </div>
 
-        <!-- Right Column: Placeholder for Visit Form -->
+        <!-- Right Column: Form Kunjungan -->
         <div class="lg:col-span-2">
             @if($selectedPasien)
-                <!-- Nanti akan diisi oleh Form Kunjungan -->
-                <div class="bg-white shadow-lg rounded-sm border border-gray-200 p-8 h-full flex flex-col items-center justify-center text-center">
-                    <div class="p-4 bg-indigo-50 rounded-full mb-4">
-                        <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+                <div class="bg-white shadow-lg rounded-sm border border-gray-200 p-6">
+                    <!-- Header Form -->
+                    <div class="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Form Pendaftaran Kunjungan</h2>
+                        <span class="text-sm bg-blue-100 text-blue-800 py-1 px-3 rounded-full font-medium">
+                            {{ now()->translatedFormat('l, d F Y') }}
+                        </span>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900">Form Kunjungan</h3>
-                    <p class="text-gray-500 mt-2 max-w-sm">
-                        Silakan lanjutkan ke tahap berikutnya untuk mengisi detail kunjungan Poli.
-                        (Fitur ini akan diimplementasikan pada tahap selanjutnya).
-                    </p>
+
+                    @if($kunjunganBerhasil)
+                        <!-- Success State -->
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Pendaftaran Berhasil!</h3>
+                            <p class="text-gray-500 mb-6">Nomor Antrean Anda:</p>
+                            
+                            <div class="text-4xl font-mono font-bold text-indigo-600 mb-8 bg-indigo-50 inline-block px-8 py-4 rounded-lg border-2 border-indigo-100 dashed">
+                                {{ $noAntrean }}
+                            </div>
+
+                            <div class="flex justify-center space-x-4">
+                                <button wire:click="resetPendaftaran" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
+                                    Kembali ke Awal
+                                </button>
+                                <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    Cetak Antrean
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Form Input -->
+                        <form wire:submit.prevent="storeKunjungan">
+                             <!-- Patient Summary Card (Highlight) -->
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase">No RM</p>
+                                    <p class="font-bold text-gray-800">{{ $selectedPasien->no_rm }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase">Nama Pasien</p>
+                                    <p class="font-bold text-gray-800">{{ $selectedPasien->nama }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase">Jenis</p>
+                                    <p class="font-bold text-gray-800">{{ $selectedPasien->no_bpjs ? 'BPJS' : 'Umum' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase">Umur</p>
+                                    <p class="font-bold text-gray-800">{{ \Carbon\Carbon::parse($selectedPasien->tgl_lahir)->age }} Th</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Pilih Poli -->
+                                <div>
+                                    <label for="poli_id" class="block mb-2 text-sm font-medium text-gray-900">Poli Tujuan <span class="text-red-500">*</span></label>
+                                    <select wire:model="poli_id" id="poli_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option value="">-- Pilih Poli --</option>
+                                        @foreach($poliList as $poli)
+                                            <option value="{{ $poli->id }}">{{ $poli->nama_poli }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('poli_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Metode Bayar -->
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Metode Pembayaran <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-4 mt-3">
+                                        <div class="flex items-center">
+                                            <input wire:model.live="metode_bayar" id="bayar-umum" type="radio" value="Umum" name="metode_bayar" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                            <label for="bayar-umum" class="ml-2 text-sm font-medium text-gray-900">Umum / Tunai</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input wire:model.live="metode_bayar" id="bayar-bpjs" type="radio" value="BPJS" name="metode_bayar" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                            <label for="bayar-bpjs" class="ml-2 text-sm font-medium text-gray-900">BPJS Kesehatan</label>
+                                        </div>
+                                    </div>
+                                    @error('metode_bayar') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    
+                                    @if($metode_bayar === 'BPJS' && empty($selectedPasien->no_bpjs))
+                                        <div class="mt-2 p-2 bg-red-50 text-red-700 text-xs rounded border border-red-200">
+                                            ⚠️ Pasien ini tidak memiliki No BPJS. Harap update data pasien atau gunakan metode Umum.
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Keluhan Awal -->
+                            <div class="mt-6">
+                                <label for="keluhan_awal" class="block mb-2 text-sm font-medium text-gray-900">Keluhan Awal <span class="text-red-500">*</span></label>
+                                <textarea wire:model="keluhan_awal" id="keluhan_awal" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Jelaskan keluhan utama pasien secara singkat..."></textarea>
+                                @error('keluhan_awal') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-8 flex justify-end">
+                                <button type="submit" wire:loading.attr="disabled" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none flex items-center">
+                                    <span wire:loading.remove wire:target="storeKunjungan">Daftarkan Kunjungan</span>
+                                    <span wire:loading wire:target="storeKunjungan">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Memproses...
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg p-8 h-full flex flex-col items-center justify-center text-center">
-                     <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <h3 class="text-lg font-medium text-gray-900">Belum ada Pasien dipilih</h3>
-                    <p class="text-gray-500 mt-2">
-                        Silakan cari pasien menggunakan form di sebelah kiri atau daftarkan pasien baru.
+                <div class="bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg p-8 h-full flex flex-col items-center justify-center text-center text-gray-400">
+                     <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <h3 class="text-xl font-medium text-gray-500">Siap Mendaftar</h3>
+                    <p class="mt-2 max-w-sm mx-auto">
+                        Cari pasien di sebelah kiri untuk menampilkan form pendaftaran kunjungan.
                     </p>
                 </div>
             @endif
