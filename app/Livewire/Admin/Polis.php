@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 
 #[Layout('components.layouts.app')]
-#[Title('Data Master Poli - SI PUSKES')]
+#[Title('Kelola Poliklinik - SI PUSKES')]
 class Polis extends Component
 {
     use WithPagination;

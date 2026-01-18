@@ -22,9 +22,14 @@ Route::middleware('auth')->group(function () {
         return redirect('/login');
     })->name('logout');
 
-    // Admin Routes - User Management
+    // Admin Routes - User Management & Master Data
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');
         Route::get('/polis', \App\Livewire\Admin\Polis::class)->name('polis');
+    });
+
+    // Shared Routes - Admin & Apoteker
+    Route::middleware('role:admin,apoteker')->group(function () {
+        Route::get('/obats', \App\Livewire\Admin\Obats::class)->name('obats');
     });
 });

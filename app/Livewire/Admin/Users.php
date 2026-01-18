@@ -10,7 +10,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 
 #[Layout('components.layouts.app')]
-#[Title('Manajemen User - SI PUSKES')]
+#[Title('Kelola Pengguna - SI PUSKES')]
 class Users extends Component
 {
     use WithPagination;

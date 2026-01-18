@@ -58,5 +58,11 @@ class DatabaseSeeder extends Seeder
             'nama_lengkap' => 'Dr. Budi Santoso, M.Kes',
             'role' => 'kepala Puskesmas',
         ]);
+
+        // Call Seeders untuk Master Data
+        $this->call([
+            PoliSeeder::class,
+            ObatSeeder::class,
+        ]);
     }
 }

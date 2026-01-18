@@ -1,99 +1,86 @@
 @startuml
-|Pasien|
-start
-:Datang ke Puskesmas & Menuju Loket;
+left to right direction
+skinparam packageStyle rectangle
 
-|Petugas Pendaftaran|
-:Cek Status Pasien;
-' Decision Node: Pasien Baru vs Lama (Sesuai PDF Poin 2)
-if (Pasien Baru?) then (Ya)
-    :Input Data Identitas;
-    |Sistem|
-    :Buat No. RM Baru;
-else (Tidak (Pasien Lama))
-    |Sistem|
-    :Cari Data Pasien;
-    |Petugas Pendaftaran|
-    :Verifikasi Data (Alamat/Kontak);
-endif
+actor "Pasien" as P
+actor "Petugas Pendaftaran" as PP
+actor "Dokter" as D
+actor "Apoteker" as A
+actor "Kepala Puskesmas" as KP
+actor "Admin Sistem" as AS
 
-|Petugas Pendaftaran|
-:Tanyakan Poli Tujuan;
-|Sistem|
-:Daftarkan Kunjungan ke Poli;
-|Petugas Pendaftaran|
-:Cetak Nomor Antrean;
+package "Sistem Informasi Puskesmas" {
+    ' --- PASIEN ---
+    usecase "Melakukan pendaftaran kunjungan" as UC_Pasien
 
-' Decision Node: Umum vs BPJS (Sesuai PDF Poin 4)
-if (Status Kepesertaan?) then (Umum)
-    |Sistem|
-    :Set Status Kunjungan "Umum";
-else (BPJS)
-    |Petugas Pendaftaran|
-    :Input Nomor BPJS;
-    |Sistem|
-    :Tandai "Klaim BPJS";
-endif
+    ' --- PETUGAS PENDAFTARAN ---
+    usecase "Registrasi pasien baru" as UC_RegBaru
+    usecase "Verifikasi data pasien lama" as UC_VerifLama
+    usecase "Daftar kunjungan ke poli" as UC_DaftarPoli
+    usecase "Mencatat status pembayaran (Umum)" as UC_BayarUmum
+    usecase "Mencatat data/klaim BPJS" as UC_BPJS
 
-|Pasien|
-:Menunggu di Ruang Tunggu;
-:Masuk Ruang Pemeriksaan;
+    ' --- DOKTER ---
+    usecase "Melihat data pasien" as UC_LihatData
+    usecase "Mengisi rekam medis" as UC_RekamMedis
+    usecase "Mencatat tanda vital" as UC_TTV
+    usecase "Membuat resep obat" as UC_Resep
 
-|Sistem|
-:Tampilkan Data Identitas & Riwayat;
+    ' --- APOTEKER ---
+    usecase "Menerima resep dari sistem" as UC_TerimaResep
+    usecase "Mengecek ketersediaan stok" as UC_CekStok
+    usecase "Menyerahkan obat ke pasien" as UC_SerahObat
+    usecase "Menandai resep 'obat tidak lengkap'" as UC_ObatKurang
+    usecase "Mencatat pengeluaran obat" as UC_CatatKeluar
 
-|Dokter|
-:Periksa Pasien;
-:Catat Tanda Vital, Keluhan, Diagnosis;
-|Sistem|
-:Simpan Rekam Medis;
+    ' --- KEPALA PUSKESMAS ---
+    usecase "Menghasilkan laporan" as UC_GenReport
+    usecase "Melihat laporan kunjungan" as UC_LapKunjungan
+    usecase "Melihat laporan penyakit" as UC_LapPenyakit
+    usecase "Melihat laporan obat" as UC_LapObat
 
-' Decision Node: Perlu Obat? (Sesuai PDF Poin 7)
-|Dokter|
-if (Perlu Obat?) then (Ya)
-    :Buat Resep Obat di Sistem;
-else (Tidak)
-    ' Tidak ada aksi resep
-endif
+    ' --- ADMIN ---
+    usecase "Mengelola data pengguna" as UC_User
+    usecase "Mengelola master data" as UC_Master
+}
 
-' Proses Pembayaran/Admin (Sesuai PDF Poin 8 - Dilakukan setelah periksa)
-|Sistem|
-:Hitung Biaya Layanan;
+' Relasi Pasien
+P --> UC_Pasien
 
-|Petugas Pendaftaran|
-if (Status Pasien?) then (Umum)
-    :Terima Pembayaran Tunai;
-    |Sistem|
-    :Catat Status "Lunas";
-else (BPJS)
-    |Sistem|
-    :Tandai Klaim BPJS Final;
-endif
+' Relasi Petugas (Sesuai Petunjuk Relasi Hal 1)
+PP --> UC_RegBaru
+PP --> UC_VerifLama
+PP --> UC_BayarUmum
+PP --> UC_BPJS
 
-' Alur Farmasi (Sesuai PDF Poin 9-10)
-|Pasien|
-:Menuju Farmasi;
+' Aturan Include dari PDF 
+UC_RegBaru ..> UC_DaftarPoli : <<include>>
+UC_VerifLama ..> UC_DaftarPoli : <<include>>
 
-|Apoteker|
-:Ambil Data Resep dari Sistem;
-:Cek Stok Obat;
+' Relasi Dokter
+D --> UC_RekamMedis
+D --> UC_Resep
+' Aturan Include dari PDF [cite: 48]
+UC_RekamMedis ..> UC_LihatData : <<include>>
+' (PDF bilang Tanda Vital digabung dlm pemeriksaan/rekam medis [cite: 31])
+UC_RekamMedis ..> UC_TTV : <<include>>
 
-' Decision Node: Stok Cukup? (Sesuai PDF Poin 10)
-if (Stok Cukup?) then (Ya)
-    :Siapkan Obat;
-    :Serahkan Obat ke Pasien;
-    |Sistem|
-    :Kurangi Stok Obat;
-else (Tidak)
-    |Apoteker|
-    :Tandai Resep "Obat Tidak Lengkap";
-    :Jelaskan ke Pasien;
-endif
+' Relasi Apoteker
+A --> UC_SerahObat
+A --> UC_ObatKurang
+A --> UC_CatatKeluar
+' Aturan Include dari PDF [cite: 49]
+UC_SerahObat ..> UC_TerimaResep : <<include>>
+UC_SerahObat ..> UC_CekStok : <<include>>
 
-|Pasien|
-:Meninggalkan Puskesmas;
+' Relasi Kepala Puskesmas (Generalisasi [cite: 50])
+KP --> UC_GenReport
+UC_LapKunjungan --|> UC_GenReport
+UC_LapPenyakit --|> UC_GenReport
+UC_LapObat --|> UC_GenReport
 
-|Sistem|
-:Simpan Data Kunjungan (Untuk Laporan);
-stop
+' Relasi Admin
+AS --> UC_User
+AS --> UC_Master
+
 @enduml
