@@ -108,23 +108,10 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 
 ---
 
-## 💊 Tahap 7: Modul Farmasi (Apoteker)
-*Tujuan: Validasi stok dan penyerahan obat.*
-
-- [ ] **Dashboard Farmasi**
-    - Menampilkan kunjungan dengan status `pharmacy`.
-- [ ] **Proses Resep**
-    - Component: `Farmasi/ProsesResep`
-    - Tampil detail obat yang diminta dokter.
-    - Logika: Validasi stok (Cukup/Kurang).
-    - Tombol "Selesai Siapkan" -> Kurangi stok di tabel `obats` -> Update status kunjungan jadi `payment`.
-
----
-
-## 💰 Tahap 8: Modul Kasir & Pembayaran
+## 💰 Tahap 7: Modul Kasir & Pembayaran
 *Tujuan: Finalisasi transaksi.*
 
-- [ ] **Dashboard Kasir** (Bisa gabung menu Pendaftaran)
+- [x] **Dashboard Kasir** (Bisa gabung menu Pendaftaran)
     - Menampilkan kunjungan status `payment`.
 - [ ] **Hitung Tagihan**
     - Component: `Kasir/Pembayaran`
@@ -134,6 +121,20 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
     - Update status kunjungan jadi `finished`.
 
 ---
+
+## 💊 Tahap 8: Modul Farmasi (Apoteker)
+*Tujuan: Validasi stok dan penyerahan obat.*
+
+- [ ] **Dashboard Farmasi**
+    - Menampilkan kunjungan dengan status `obat`.
+- [ ] **Proses Resep**
+    - Component: `Farmasi/ProsesResep`
+    - Tampil detail obat yang diminta dokter.
+    - Logika: Validasi stok (Cukup/Kurang).
+    - Tombol "Selesai Siapkan" -> Kurangi stok di tabel `obats` -> Update status kunjungan jadi `payment`.
+
+---
+
 
 ## 📊 Tahap 9: Laporan & Finishing
 *Tujuan: Kebutuhan Kepala Puskesmas.*

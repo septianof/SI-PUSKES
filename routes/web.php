@@ -44,4 +44,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/dokter/periksa/{kunjungan}', \App\Livewire\Dokter\PeriksaPasien::class)->name('dokter.periksa');
         Route::get('/dokter/riwayat', \App\Livewire\Dokter\RiwayatPasien::class)->name('dokter.riwayat');
     });
+
+    // Kasir Routes (Role: Pendaftaran)
+    Route::middleware('role:pendaftaran')->group(function () {
+        Route::get('/kasir', \App\Livewire\Kasir\AntreanBayar::class)->name('kasir');
+    });
 });
