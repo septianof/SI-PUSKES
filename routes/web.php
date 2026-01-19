@@ -42,5 +42,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:dokter')->group(function () {
         Route::get('/dokter/antrean', \App\Livewire\Dokter\AntreanPoli::class)->name('dokter.antrean');
         Route::get('/dokter/periksa/{kunjungan}', \App\Livewire\Dokter\PeriksaPasien::class)->name('dokter.periksa');
+        Route::get('/dokter/riwayat', \App\Livewire\Dokter\RiwayatPasien::class)->name('dokter.riwayat');
     });
 });

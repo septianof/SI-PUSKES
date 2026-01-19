@@ -77,7 +77,7 @@
                         <a href="{{ route('dokter.antrean') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dokter.antrean') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Antrean Poli</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dokter.riwayat') ? 'bg-gray-200 font-semibold' : '' }}">
+                        <a href="{{ route('dokter.riwayat') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dokter.riwayat') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Riwayat Rekam Medis</span>
                         </a>
                     @endif
