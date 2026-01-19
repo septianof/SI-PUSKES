@@ -56,7 +56,7 @@
                                 </tr>
 
                                 {{-- Biaya Obat (jika ada) --}}
-                                @if($this->detailObat->isNotEmpty())
+                                @if(count($this->detailObat) > 0)
                                     @foreach($this->detailObat as $item)
                                         <tr>
                                             <td class="px-4 py-3 text-sm text-gray-600">
@@ -95,7 +95,12 @@
                     <div class="mt-6 border-t pt-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Pembayaran Tunai</h3>
                         
-                        <form wire:submit.prevent="finalisasiBayar">
+                        {{-- Gunakan x-data untuk handling state submit secara instan di sisi client --}}
+                        <form 
+                            wire:submit.prevent="finalisasiBayar" 
+                            x-data="{ isProcessing: false }" 
+                            x-on:submit="isProcessing = true"
+                        >
                             <div class="mb-4">
                                 <label for="bayarTunai" class="block text-sm font-medium text-gray-700 mb-2">
                                     Jumlah Uang Dibayar
@@ -112,6 +117,7 @@
                                         placeholder="0"
                                         min="0"
                                         step="1000"
+                                        :disabled="isProcessing" 
                                     >
                                 </div>
                                 @error('bayarTunai') 
@@ -136,14 +142,22 @@
                                 <a 
                                     href="{{ route('kasir') }}" 
                                     class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    :class="{ 'opacity-50 pointer-events-none': isProcessing }"
                                 >
                                     Batal
                                 </a>
                                 <button 
                                     type="submit"
-                                    class="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    class="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    :disabled="isProcessing"
                                 >
-                                    Bayar & Cetak
+                                    {{-- Tampilkan spinner jika isProcessing TRUE --}}
+                                    <svg x-show="isProcessing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="display: none;">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    
+                                    <span x-text="isProcessing ? 'Memproses...' : 'Bayar & Cetak'"></span>
                                 </button>
                             </div>
                         </form>

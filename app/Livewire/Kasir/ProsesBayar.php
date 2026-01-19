@@ -101,6 +101,9 @@ class ProsesBayar extends Component
      */
     public function finalisasiBayar()
     {
+        // Debug: Check if method is called
+        \Log::info('finalisasiBayar called', ['bayarTunai' => $this->bayarTunai, 'grandTotal' => $this->grandTotal]);
+
         // Validation
         $this->validate([
             'bayarTunai' => [
@@ -114,15 +117,23 @@ class ProsesBayar extends Component
             'bayarTunai.min' => 'Uang tidak cukup. Minimal: Rp ' . number_format($this->grandTotal, 0, ',', '.'),
         ]);
 
+        // CEK DUPLIKASI: Pastikan belum ada pembayaran untuk kunjungan ini
+        if (Pembayaran::where('kunjungan_id', $this->kunjungan->id)->exists()) {
+            session()->flash('error', 'Transaksi pembayaran sudah berhasil diproses sebelumnya.');
+            return $this->redirect(route('kasir'), navigate: true);
+        }
+
         try {
             // 1. Create Pembayaran record
-            Pembayaran::create([
+            $pembayaran = Pembayaran::create([
                 'kunjungan_id' => $this->kunjungan->id,
                 'tgl_bayar' => now(),
                 'total_biaya' => $this->grandTotal,
-                'metode_bayar' => 'Tunai',
-                'status' => 'Lunas',
+                'metode_bayar' => 'cash',  // Match enum in migration
+                'status' => 'lunas',       // Match enum in migration (lowercase)
             ]);
+
+            \Log::info('Pembayaran created', ['id' => $pembayaran->id]);
 
             // 2. Update kunjungan status
             // Jika ada resep → 'obat' (ke farmasi), jika tidak → 'selesai'
@@ -130,6 +141,8 @@ class ProsesBayar extends Component
             $newStatus = $hasResep ? 'obat' : 'selesai';
             
             $this->kunjungan->update(['status' => $newStatus]);
+
+            \Log::info('Kunjungan updated', ['status' => $newStatus]);
 
             // Success message
             $message = 'Pembayaran berhasil! ';
@@ -139,9 +152,10 @@ class ProsesBayar extends Component
 
             session()->flash('success', $message);
 
-            return redirect()->route('kasir');
+            return $this->redirect(route('kasir'), navigate: true);
 
         } catch (\Exception $e) {
+            \Log::error('Error in finalisasiBayar', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
