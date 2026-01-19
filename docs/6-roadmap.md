@@ -94,14 +94,17 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 🩺 Tahap 6: Modul Pemeriksaan (Dokter)
 *Tujuan: Dokter input hasil periksa dan resep.*
 
-- [ ] **Dashboard Dokter**
-    - Menampilkan daftar pasien dengan status `waiting` di poli dokter tersebut.
+- [ ] **Antrean Poli**
+    - Menampilkan daftar pasien dengan status `menunggu` di poli dokter tersebut.
 - [ ] **Form Rekam Medis**
     - Component: `Dokter/PeriksaPasien`
     - Input: Anamnesa, Tensi, Diagnosa.
 - [ ] **Input Resep (Cart System)**
     - Logika tambah obat ke list resep sementara.
     - Tombol "Simpan & Selesai" -> Update status kunjungan jadi `pharmacy` (jika ada obat) atau `payment` (jika tanpa obat).
+- [ ] **Riwayat Rekam Medis**
+    - Component: `Dokter/RiwayatRekamMedis`
+    - Output: Tampilkan Riwayat Rekam Medis.
 
 ---
 

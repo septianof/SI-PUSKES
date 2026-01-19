@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('nama_lengkap');
             $table->enum('role', ['admin', 'pendaftaran', 'dokter', 'apoteker', 'kepala Puskesmas']);
+            $table->unsignedBigInteger('poli_id')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

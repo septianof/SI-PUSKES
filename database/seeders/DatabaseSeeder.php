@@ -16,7 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Menambahkan 5 user dummy statis untuk testing
+        // PENTING: Seed Poli dan Obat DULU sebelum users (karena dokter butuh poli_id)
+        $this->call([
+            PoliSeeder::class,
+            ObatSeeder::class,
+        ]);
+
+        // Menambahkan 6 user dummy statis untuk testing
         // Password default: password123
         
         // 1. Admin
@@ -35,12 +41,22 @@ class DatabaseSeeder extends Seeder
             'role' => 'pendaftaran',
         ]);
 
-        // 3. Dokter
+        // 3. Dokter Poli Umum
         User::create([
             'username' => 'dokter1',
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Dr. Ahmad Hidayat',
             'role' => 'dokter',
+            'poli_id' => 1, // Poli Umum
+        ]);
+
+        // 3b. Dokter Poli Gigi
+        User::create([
+            'username' => 'dokter2',
+            'password' => Hash::make('password123'),
+            'nama_lengkap' => 'Dr. Siti Rahmawati',
+            'role' => 'dokter',
+            'poli_id' => 2, // Poli Gigi
         ]);
 
         // 4. Apoteker
@@ -59,10 +75,10 @@ class DatabaseSeeder extends Seeder
             'role' => 'kepala Puskesmas',
         ]);
 
-        // Call Seeders untuk Master Data
+        // Seed data dummy pasien dan kunjungan untuk testing
         $this->call([
-            PoliSeeder::class,
-            ObatSeeder::class,
+            PasienSeeder::class,
         ]);
     }
 }
+

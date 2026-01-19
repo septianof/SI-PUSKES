@@ -21,6 +21,7 @@ class User extends Authenticatable
         'username',
         'nama_lengkap',
         'role',
+        'poli_id',
         'password',
     ];
 
@@ -44,6 +45,14 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the poli where this user is assigned (for dokter role).
+     */
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class, 'poli_id');
     }
 
     /**
