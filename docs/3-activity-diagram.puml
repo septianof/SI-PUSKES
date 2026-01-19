@@ -14,16 +14,21 @@ else (Tidak (Pasien Lama))
     :Verifikasi Data Pasien Lama;
 endif
 |Petugas Pendaftaran|
-:Tanya Poli & Kepesertaan;
+:Tanya Poli Tujuan;
+:Tanya Metode Pembayaran;
+if (Metode Pembayaran?) then (BPJS)
+    :Input No. BPJS (13 digit);
+    |Sistem|
+    :Auto-generate No SEP Lokal;
+    :Simpan Klaim BPJS (status: pending);
+else (Umum)
+    |Sistem|
+    :Simpan sebagai kunjungan Umum;
+endif
 |Sistem|
-:Simpan Data & Antrean;
+:Simpan Data Kunjungan;
 |Petugas Pendaftaran|
 :Cetak Nomor Antrean;
- if (Status Kepesertaan?) then (Umum)
-    :Status Kunjungan "Umum";
-else (BPJS)
-    :Tandai Klaim BPJS Awal;
-endif
 |Pasien|
 :Menunggu di Ruang Tunggu;
 :Masuk Ruang Pemeriksaan;
@@ -33,40 +38,95 @@ endif
 :Diagnosis & Input Rekam Medis;
 if (Perlu Obat?) then (Ya)
     :Buat Resep Obat;
-    |Pasien|
-    :Menuju Farmasi;
-    |Apoteker|
-    :Ambil Data Resep;
-    :Cek Stok Obat;
-    if (Stok Cukup?) then (Ya)
-        :Siapkan Obat;
-        :Serahkan Obat ke Pasien;
-        |Sistem|
-        :Kurangi Stok Obat;
-    else (Tidak)
-        |Apoteker|
-        :Tandai 'Obat Tidak Lengkap';
-        :Jelaskan ke Pasien;
-    endif
+    note right
+        Resep tersimpan dengan status 'menunggu'
+    end note
 else (Tidak)
-    ' Langsung kembali ke pendaftaran
+    ' Tidak ada resep
 endif
-|Pasien|
-:Kembali ke Loket Pendaftaran;
-|Petugas Pendaftaran|
-:Terima Pembayaran / Verifikasi Final;
+
+' === PERCABANGAN ALUR BPJS vs UMUM ===
 |Sistem|
-:Hitung Total Biaya Akhir;
-if (Status Pasien?) then (Umum)
-    |Petugas Pendaftaran|
-    :Terima Bayar Tunai & Update Lunas;
-else (BPJS)
-    |Petugas Pendaftaran|
-    :Tandai Klaim BPJS Final;
+if (Metode Bayar?) then (BPJS)
+    ' BPJS: SKIP KASIR
+    if (Ada Resep?) then (Ya)
+        :Update Status → 'obat';
+        |Pasien|
+        :Menuju Farmasi;
+        |Apoteker|
+        :Ambil Data Resep;
+        :Cek Stok Obat;
+        if (Stok Cukup?) then (Ya)
+            :Siapkan Obat;
+            :Serahkan Obat ke Pasien;
+            |Sistem|
+            :Kurangi Stok Obat;
+            :Update Status → 'selesai';
+        else (Tidak)
+            |Apoteker|
+            :Tandai 'Obat Tidak Lengkap';
+            :Jelaskan ke Pasien;
+            |Sistem|
+            :Update Status → 'selesai';
+        endif
+    else (Tidak)
+        :Update Status → 'selesai';
+        note right
+            BPJS tanpa resep langsung pulang
+        end note
+    endif
+    |Pasien|
+    :Meninggalkan Puskesmas;
+    stop
+else (Umum)
+    ' UMUM: KE KASIR DULU
+    :Update Status → 'bayar';
+    |Pasien|
+    :Menuju Loket Pembayaran;
+    |Petugas Pendaftaran (Kasir)|
+    :Tampilkan Invoice;
+    |Sistem|
+    :Hitung Total Biaya;
+    note right
+        Total = Tarif Poli + Biaya Obat
+    end note
+    |Petugas Pendaftaran (Kasir)|
+    :Input Jumlah Bayar Tunai;
+    |Sistem|
+    :Hitung Kembalian Otomatis;
+    |Petugas Pendaftaran (Kasir)|
+    :Terima Bayar & Berikan Kembalian;
+    |Sistem|
+    :Simpan Record Pembayaran (status: Lunas);
+    
+    if (Ada Resep?) then (Ya)
+        :Update Status → 'obat';
+        |Pasien|
+        :Menuju Farmasi;
+        |Apoteker|
+        :Ambil Data Resep;
+        :Cek Stok Obat;
+        if (Stok Cukup?) then (Ya)
+            :Siapkan Obat;
+            :Serahkan Obat ke Pasien;
+            |Sistem|
+            :Kurangi Stok Obat;
+            :Update Status → 'selesai';
+        else (Tidak)
+            |Apoteker|
+            :Tandai 'Obat Tidak Lengkap';
+            :Jelaskan ke Pasien;
+            |Sistem|
+            :Update Status → 'selesai';
+        endif
+    else (Tidak)
+        :Update Status → 'selesai';
+        note right
+            Umum tanpa resep, selesai setelah bayar
+        end note
+    endif
+    |Pasien|
+    :Meninggalkan Puskesmas;
+    stop
 endif
-|Sistem|
-:Simpan Laporan Kunjungan;
-|Pasien|
-:Meninggalkan Puskesmas;
-stop
 @enduml

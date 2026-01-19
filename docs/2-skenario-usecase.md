@@ -13,9 +13,8 @@
 | Komponen | Deskripsi |
 | :--- | :--- |
 | **Pre-condition** | Pasien datang ke loket pendaftaran. |
-| **Main Flow** | 1. Pasien menuju loket pendaftaran.<br>2. Petugas mengecek status pasien (Baru/Lama).<br>3. [cite_start]**Jika Pasien Baru:** Petugas mengisi identitas, Sistem membuat No. RM Baru[cite: 57].<br>4. [cite_start]**Jika Pasien Lama:** Petugas mencari dan memverifikasi data (alamat, kontak)[cite: 59].<br>5. Petugas menanyakan Poli Tujuan.<br>6. [cite_start]Petugas mendaftarkan kunjungan ke poli & mencetak nomor antrean [cite: 62-63].<br>7. Petugas mengecek status kepesertaan (Umum/BPJS). |
-| **Alternative Flow (BPJS)** | [cite_start]**Langkah 7b:** Jika pasien BPJS, petugas memasukkan nomor BPJS dan menandai kunjungan sebagai "Klaim BPJS"[cite: 67]. |
-| **Post-condition** | [cite_start]Pasien mendapatkan nomor antrean dan menunggu di ruang tunggu poli[cite: 68]. |
+| **Main Flow** | 1. Pasien menuju loket pendaftaran.<br>2. Petugas mengecek status pasien (Baru/Lama).<br>3. [cite_start]**Jika Pasien Baru:** Petugas mengisi identitas (NIK, Nama, Alamat, Tanggal Lahir), Sistem membuat No. RM Baru[cite: 57].<br>4. [cite_start]**Jika Pasien Lama:** Petugas mencari dan memverifikasi data (alamat, kontak)[cite: 59].<br>5. Petugas menanyakan Poli Tujuan.<br>6. **Petugas menanyakan metode pembayaran: Umum (Tunai) atau BPJS.**<br>7. **Jika pilih BPJS:** Petugas meminta dan memasukkan No. BPJS (13 digit). Sistem auto-generate No SEP lokal.<br>8. [cite_start]Petugas mendaftarkan kunjungan ke poli & mencetak nomor antrean [cite: 62-63]. |
+| **Post-condition** | [cite_start]Pasien mendapatkan nomor antrean dan menunggu di ruang tunggu poli[cite: 68]. Data kunjungan tersimpan dengan metode pembayaran (Umum/BPJS). |
 
 ---
 
@@ -35,16 +34,21 @@
 
 ## 3. Modul Pembayaran (Kasir)
 
-### UC-03: Pembayaran & Finalisasi Kunjungan
+### UC-03: Pembayaran & Finalisasi Kunjungan (Pasien Umum)
 **Aktor:** Petugas Pendaftaran (sebagai Kasir)
 [cite_start]**Referensi PDF:** Langkah 8 [cite: 77-80]
 
 | Komponen | Deskripsi |
 | :--- | :--- |
-| **Trigger** | Pasien selesai diperiksa dokter. |
-| **Main Flow (Umum)** | 1. [cite_start]Sistem menghitung biaya layanan (jasa medis + obat nanti).<br>2. Petugas pendaftaran menerima pembayaran tunai.<br>3. Petugas mencatat status "Lunas" di sistem. |
-| **Main Flow (BPJS)** | 1. Biaya ditandai sebagai klaim BPJS di sistem.<br>2. [cite_start]Tidak ada pembayaran tunai di loket[cite: 80]. |
-| **Post-condition** | Administrasi keuangan selesai. |
+| **Trigger** | Pasien **Umum** selesai diperiksa dokter. |
+| **Pre-condition** | Kunjungan memiliki metode pembayaran "Umum" dan status "bayar". |
+| **Main Flow** | 1. [cite_start]Sistem menghitung total biaya (tarif poli + biaya obat dari resep).<br>2. Petugas pendaftaran menampilkan invoice kepada pasien.<br>3. Petugas menerima pembayaran tunai dari pasien.<br>4. Petugas input jumlah uang dibayar, sistem hitung kembalian otomatis.<br>5. Petugas mencatat status "Lunas" di sistem dengan metode "Tunai".<br>6. **Jika ada resep:** Pasien diarahkan ke Farmasi (status → 'obat').<br>7. **Jika tidak ada resep:** Kunjungan selesai (status → 'selesai'). |
+| **Post-condition** | Record pembayaran tersimpan di tabel `pembayarans`. Administrasi keuangan selesai. |
+
+**Catatan BPJS:**
+- **Pasien BPJS TIDAK melewati kasir.** 
+- Setelah pemeriksaan, dokter langsung mengarahkan:<br>  • Jika ada resep → ke Farmasi (status 'obat')<br>  • Jika tidak ada resep → pulang (status 'selesai')
+- Klaim BPJS sudah tercatat otomatis saat pendaftaran dengan No SEP yang di-generate sistem.
 
 ---
 

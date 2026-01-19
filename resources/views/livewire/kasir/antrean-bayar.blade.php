@@ -56,7 +56,7 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @php
-                                                    $statusPenjamin = $this->getStatusPenjamin($antrean->pasien);
+                                                    $statusPenjamin = $this->getStatusPenjamin($antrean);
                                                     $badgeColor = $statusPenjamin === 'BPJS' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
                                                 @endphp
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeColor }}">

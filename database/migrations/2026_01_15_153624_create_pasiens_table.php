@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('nama');
             $table->text('alamat')->nullable();
             $table->date('tgl_lahir');
-            $table->string('no_bpjs', 13)->nullable()->unique();
             $table->timestamps();
         });
     }

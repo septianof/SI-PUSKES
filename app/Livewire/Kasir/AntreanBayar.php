@@ -32,14 +32,14 @@ class AntreanBayar extends Component
     }
 
     /**
-     * Get status penjamin (Umum/BPJS) berdasarkan no_bpjs pasien.
+     * Get status penjamin dari kunjungan.
      *
-     * @param \App\Models\Pasien $pasien
+     * @param \App\Models\Kunjungan $kunjungan
      * @return string
      */
-    public function getStatusPenjamin($pasien)
+    public function getStatusPenjamin($kunjungan)
     {
-        return !empty($pasien->no_bpjs) ? 'BPJS' : 'Umum';
+        return $kunjungan->metode_bayar;  // 'BPJS' atau 'Umum'
     }
 
     /**

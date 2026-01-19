@@ -19,6 +19,8 @@ class Kunjungan extends Model
         'poli_id',
         'tgl_kunjungan',
         'status',
+        'metode_bayar',
+        'no_bpjs',
         'keluhan_awal',
     ];
 

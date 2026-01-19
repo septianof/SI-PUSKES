@@ -74,11 +74,6 @@ class DatabaseSeeder extends Seeder
             'nama_lengkap' => 'Dr. Budi Santoso, M.Kes',
             'role' => 'kepala Puskesmas',
         ]);
-
-        // Seed data dummy pasien dan kunjungan untuk testing
-        $this->call([
-            PasienSeeder::class,
-        ]);
     }
 }
 

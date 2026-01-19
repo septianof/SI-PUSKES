@@ -5,6 +5,7 @@ namespace App\Livewire\Pendaftaran;
 use App\Models\Pasien;
 use App\Models\Poli;
 use App\Models\Kunjungan;
+use App\Models\KlaimBpjs;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -119,6 +120,10 @@ class DaftarPasien extends Component
         $this->search = '';
         $this->searchResults = [];
 
+        // Reset form kunjungan ke default
+        $this->metode_bayar = 'Umum';
+        $this->no_bpjs = '';
+
         // Dispatch event untuk komponen lain (nanti untuk Form Kunjungan)
         $this->dispatch('pasien-selected', pasienId: $pasienId);
     }
@@ -157,18 +162,13 @@ class DaftarPasien extends Component
      */
     public function storePasienBaru()
     {
-        // Validation Rules
+        // Validation Rules (NO MORE no_bpjs)
         $rules = [
             'nik' => 'required|digits:16|unique:pasiens,nik',
             'nama' => 'required|min:3',
             'tgl_lahir' => 'required|date|before:today',
             'alamat' => 'required|min:10',
         ];
-
-        // No BPJS optional, tapi jika diisi harus 13 digit
-        if (!empty($this->no_bpjs)) {
-            $rules['no_bpjs'] = 'digits:13';
-        }
 
         // Validate Input
         $validated = $this->validate($rules, $this->messages);
@@ -177,14 +177,13 @@ class DaftarPasien extends Component
             // Generate No RM otomatis
             $noRm = $this->generateNoRm();
 
-            // Create New Pasien
+            // Create New Pasien (WITHOUT no_bpjs)
             $pasien = Pasien::create([
                 'no_rm' => $noRm,
                 'nik' => $this->nik,
                 'nama' => $this->nama,
                 'tgl_lahir' => $this->tgl_lahir,
                 'alamat' => $this->alamat,
-                'no_bpjs' => $this->no_bpjs ?: null,
             ]);
 
             // Auto-select pasien yang baru dibuat
@@ -263,26 +262,37 @@ class DaftarPasien extends Component
             'keluhan_awal' => 'required|min:10',
         ];
 
+        // CONDITIONAL: Jika pilih BPJS, no_bpjs wajib diisi
+        if ($this->metode_bayar === 'BPJS') {
+            $rules['no_bpjs'] = 'required|digits:13';
+        }
+
         // Validate Input
         $this->validate($rules, $this->messages);
 
-        // VALIDASI KHUSUS: Jika metode bayar BPJS, cek no_bpjs pasien
-        if ($this->metode_bayar === 'BPJS') {
-            if (empty($this->selectedPasien->no_bpjs)) {
-                $this->addError('metode_bayar', 'Pasien ini belum memiliki No BPJS. Silakan pilih metode bayar Umum atau update data pasien.');
-                return;
-            }
-        }
-
         try {
-            // Create Kunjungan
+            // Create Kunjungan dengan metode_bayar dan no_bpjs
             $kunjungan = Kunjungan::create([
                 'pasien_id' => $this->selectedPasienId,
                 'poli_id' => $this->poli_id,
                 'tgl_kunjungan' => now(),
                 'status' => 'menunggu',
+                'metode_bayar' => $this->metode_bayar,
+                'no_bpjs' => $this->metode_bayar === 'BPJS' ? $this->no_bpjs : null,
                 'keluhan_awal' => $this->keluhan_awal,
             ]);
+
+            // Auto-generate SEP untuk pasien BPJS
+            if ($this->metode_bayar === 'BPJS') {
+                $noSep = $this->generateNoSep();
+                
+                KlaimBpjs::create([
+                    'kunjungan_id' => $kunjungan->id,
+                    'no_sep' => $noSep,
+                    'status_klaim' => 'pending',
+                    'tgl_pengajuan' => now(),
+                ]);
+            }
 
             // Set status berhasil
             $this->kunjunganBerhasil = true;
@@ -306,10 +316,11 @@ class DaftarPasien extends Component
     {
         $this->poli_id = '';
         $this->metode_bayar = 'Umum';
+        $this->no_bpjs = '';
         $this->keluhan_awal = '';
         $this->kunjunganBerhasil = false;
         $this->noAntrean = null;
-        $this->resetValidation(['poli_id', 'metode_bayar', 'keluhan_awal']);
+        $this->resetValidation(['poli_id', 'metode_bayar', 'no_bpjs', 'keluhan_awal']);
     }
 
     /**
@@ -320,6 +331,34 @@ class DaftarPasien extends Component
         $this->clearSelectedPasien();
         $this->kunjunganBerhasil = false;
         $this->noAntrean = null;
+    }
+
+    /**
+     * Generate No SEP lokal untuk pembelajaran
+     * Format: SEP-YYYYMMDD-XXX
+     * Example: SEP-20260119-001
+     * 
+     * @return string
+     */
+    private function generateNoSep()
+    {
+        $datePrefix = now()->format('Ymd'); // 20260119
+        
+        // Cari SEP terakhir hari ini
+        $lastSep = KlaimBpjs::where('no_sep', 'like', "SEP-{$datePrefix}-%")
+            ->orderBy('no_sep', 'desc')
+            ->first();
+        
+        if ($lastSep) {
+            // Ambil 3 digit terakhir dan increment
+            $lastNumber = (int) substr($lastSep->no_sep, -3);
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+        
+        // Format: SEP-20260119-001
+        return "SEP-{$datePrefix}-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**

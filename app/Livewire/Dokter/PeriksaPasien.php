@@ -232,11 +232,23 @@ class PeriksaPasien extends Component
                     }
                 }
 
-                // 3. Update status to 'bayar' for ALL patients (Opsi A Flow)
-                // Payment happens first, then pharmacy (if prescription exists)
-                $this->kunjungan->update(['status' => 'bayar']);
+                // 3. Update status based on patient type (BPJS vs Umum)
+                $isBpjs = ($this->kunjungan->metode_bayar === 'BPJS');
                 
-                $statusMessage = 'Pemeriksaan selesai. Pasien diarahkan ke Kasir untuk pembayaran.';
+                if ($isBpjs) {
+                    // BPJS: Langsung ke farmasi (jika ada resep) atau selesai
+                    if (count($this->resepList) > 0) {
+                        $this->kunjungan->update(['status' => 'obat']);
+                        $statusMessage = 'Pemeriksaan selesai. Pasien BPJS diarahkan ke Farmasi untuk pengambilan obat.';
+                    } else {
+                        $this->kunjungan->update(['status' => 'selesai']);
+                        $statusMessage = 'Pemeriksaan selesai. Pasien BPJS sudah dapat pulang (tidak ada resep obat).';
+                    }
+                } else {
+                    // Umum: Ke kasir untuk pembayaran
+                    $this->kunjungan->update(['status' => 'bayar']);
+                    $statusMessage = 'Pemeriksaan selesai. Pasien diarahkan ke Kasir untuk pembayaran.';
+                }
                 
                 session()->flash('success', $statusMessage);
             });

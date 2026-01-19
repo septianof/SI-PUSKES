@@ -20,7 +20,6 @@ class Pasien extends Model
         'nama',
         'alamat',
         'tgl_lahir',
-        'no_bpjs',
     ];
 
     /**

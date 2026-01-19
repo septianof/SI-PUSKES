@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('poli_id')->constrained('polis')->onDelete('cascade');
             $table->dateTime('tgl_kunjungan');
             $table->enum('status', ['menunggu', 'bayar', 'obat', 'selesai'])->default('menunggu');
+            $table->enum('metode_bayar', ['Umum', 'BPJS'])->default('Umum');
+            $table->string('no_bpjs', 13)->nullable();
             $table->text('keluhan_awal')->nullable();
             $table->timestamps();
         });

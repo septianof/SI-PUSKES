@@ -22,13 +22,14 @@ class Pasien {
     +nama : string
     +alamat : string
     +tglLahir : date
-    +noBPJS : string
 }
 
 class Kunjungan {
     +idKunjungan : int
     +tglKunjungan : datetime
     +status : string
+    +metodeBayar : string
+    +noBPJS : string
     +keluhanAwal : string
 }
 

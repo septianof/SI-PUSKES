@@ -48,5 +48,6 @@ Route::middleware('auth')->group(function () {
     // Kasir Routes (Role: Pendaftaran)
     Route::middleware('role:pendaftaran')->group(function () {
         Route::get('/kasir', \App\Livewire\Kasir\AntreanBayar::class)->name('kasir');
+        Route::get('/kasir/proses/{kunjungan}', \App\Livewire\Kasir\ProsesBayar::class)->name('kasir.proses');
     });
 });

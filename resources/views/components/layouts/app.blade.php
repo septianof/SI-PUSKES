@@ -64,7 +64,7 @@
                         <a href="{{ route('pendaftaran') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('pendaftaran') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Pendaftaran</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('pembayaran.*') ? 'bg-gray-200' : '' }}">
+                        <a href="{{ route('kasir') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('kasir*') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Pembayaran</span>
                         </a>
                     @endif

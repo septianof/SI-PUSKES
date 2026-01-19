@@ -160,7 +160,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase">Jenis</p>
-                                    <p class="font-bold text-gray-800">{{ $selectedPasien->no_bpjs ? 'BPJS' : 'Umum' }}</p>
+                                    <p class="font-bold text-gray-800">{{ $metode_bayar }}</p>
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase">Umur</p>
@@ -195,13 +195,17 @@
                                         </div>
                                     </div>
                                     @error('metode_bayar') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                                    
-                                    @if($metode_bayar === 'BPJS' && empty($selectedPasien->no_bpjs))
-                                        <div class="mt-2 p-2 bg-red-50 text-red-700 text-xs rounded border border-red-200">
-                                            ⚠️ Pasien ini tidak memiliki No BPJS. Harap update data pasien atau gunakan metode Umum.
-                                        </div>
-                                    @endif
                                 </div>
+
+                                <!-- Conditional: Input No BPJS (jika pilih BPJS) -->
+                                @if($metode_bayar === 'BPJS')
+                                    <div>
+                                        <label for="no_bpjs" class="block mb-2 text-sm font-medium text-gray-900">No. BPJS <span class="text-red-500">*</span></label>
+                                        <input type="text" wire:model="no_bpjs" id="no_bpjs" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="13 Digit" maxlength="13">
+                                        <p class="text-xs text-gray-500 mt-1">Masukkan nomor kartu BPJS pasien (13 digit)</p>
+                                        @error('no_bpjs') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Keluhan Awal -->
@@ -295,13 +299,6 @@
                             <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900">Alamat Lengkap <span class="text-red-500">*</span></label>
                             <textarea wire:model="alamat" id="alamat" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Alamat Domisili"></textarea>
                             @error('alamat') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-
-                        <!-- No BPJS -->
-                        <div>
-                            <label for="no_bpjs" class="block mb-2 text-sm font-medium text-gray-900">No. BPJS (Opsional)</label>
-                            <input type="text" wire:model="no_bpjs" id="no_bpjs" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="13 Digit No BPJS (Jika ada)">
-                            @error('no_bpjs') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </form>
