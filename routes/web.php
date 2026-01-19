@@ -37,4 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:pendaftaran')->group(function () {
         Route::get('/pendaftaran', \App\Livewire\Pendaftaran\DaftarPasien::class)->name('pendaftaran');
     });
+
+    // Dokter Routes
+    Route::middleware('role:dokter')->group(function () {
+        Route::get('/dokter/antrean', \App\Livewire\Dokter\AntreanPoli::class)->name('dokter.antrean');
+        Route::get('/dokter/periksa/{kunjungan}', \App\Livewire\Dokter\PeriksaPasien::class)->name('dokter.periksa');
+    });
 });

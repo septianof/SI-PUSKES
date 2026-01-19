@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('pasien_id')->constrained('pasiens')->onDelete('cascade');
             $table->foreignId('poli_id')->constrained('polis')->onDelete('cascade');
             $table->dateTime('tgl_kunjungan');
-            $table->enum('status', ['menunggu', 'periksa', 'obat', 'bayar', 'selesai'])->default('menunggu');
+            $table->enum('status', ['menunggu', 'bayar', 'obat', 'selesai'])->default('menunggu');
             $table->text('keluhan_awal')->nullable();
             $table->timestamps();
         });

@@ -83,24 +83,31 @@ class Dashboard extends Component
                 ];
 
             case 'dokter':
+                $user = Auth::user();
+                $poliId = $user->poli_id;
+                
                 return [
                     [
                         'label' => 'Pasien Menunggu',
-                        'value' => 0, // Kunjungan::where('poli_id', $myPoli)->where('status', 'waiting')->count()
+                        'value' => $poliId ? \App\Models\Kunjungan::where('poli_id', $poliId)
+                                                ->where('status', 'menunggu')
+                                                ->count() : 0,
                         'icon' => 'stethoscope',
                         'color' => 'blue',
                         'subtext' => 'Di Poli Anda'
                     ],
                     [
                         'label' => 'Selesai Periksa',
-                        'value' => 0, 
+                        'value' => 0, // TODO: Will be implemented when rekam medis module is done
                         'icon' => 'clipboard-document-check',
                         'color' => 'green',
                         'subtext' => 'Hari ini'
                     ],
                     [
                         'label' => 'Total Pasien',
-                        'value' => 0,
+                        'value' => $poliId ? \App\Models\Kunjungan::where('poli_id', $poliId)
+                                                ->whereDate('tgl_kunjungan', today())
+                                                ->count() : 0,
                         'icon' => 'users',
                         'color' => 'yellow',
                         'subtext' => 'Hari ini'

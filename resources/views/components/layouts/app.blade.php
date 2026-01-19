@@ -74,8 +74,11 @@
                         <div class="pt-4 pb-2">
                             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Dokter</p>
                         </div>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('poli.*') ? 'bg-gray-200' : '' }}">
-                            <span class="font-medium">Pemeriksaan/Poli</span>
+                        <a href="{{ route('dokter.antrean') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dokter.antrean') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">Antrean Poli</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('dokter.riwayat') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">Riwayat Rekam Medis</span>
                         </a>
                     @endif
 
