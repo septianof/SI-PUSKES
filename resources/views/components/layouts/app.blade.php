@@ -102,8 +102,17 @@
                         <div class="pt-4 pb-2">
                             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kepala Puskesmas</p>
                         </div>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('laporan.*') ? 'bg-gray-200' : '' }}">
-                            <span class="font-medium">Laporan</span>
+                        <div class="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            Laporan
+                        </div>
+                        <a href="{{ route('laporan.kunjungan') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('laporan.kunjungan') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">Kunjungan Poli</span>
+                        </a>
+                        <a href="{{ route('laporan.penyakit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('laporan.penyakit') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">10 Penyakit Terbanyak</span>
+                        </a>
+                        <a href="{{ route('laporan.obat') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('laporan.obat') ? 'bg-gray-200 font-semibold' : '' }}">
+                            <span class="font-medium">Pemakaian Obat</span>
                         </a>
                     @endif
                 </nav>

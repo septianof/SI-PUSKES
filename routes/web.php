@@ -56,4 +56,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/farmasi', \App\Livewire\Farmasi\AntreanResep::class)->name('farmasi');
         Route::get('/farmasi/proses/{kunjungan}', \App\Livewire\Farmasi\ProsesResep::class)->name('farmasi.proses');
     });
+
+    // Laporan Routes (Role: Kepala Puskesmas)
+    Route::middleware('role:kepala Puskesmas')->group(function () {
+        Route::get('/laporan/kunjungan', \App\Livewire\Laporan\LaporanKunjungan::class)->name('laporan.kunjungan');
+        Route::get('/laporan/penyakit', \App\Livewire\Laporan\LaporanPenyakit::class)->name('laporan.penyakit');
+        Route::get('/laporan/obat', \App\Livewire\Laporan\LaporanObat::class)->name('laporan.obat');
+    });
 });
