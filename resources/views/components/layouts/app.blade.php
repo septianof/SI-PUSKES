@@ -69,6 +69,8 @@
                         </a>
                     @endif
 
+
+
                     <!-- Dokter Menu -->
                     @if(Auth::check() && Auth::user()->role === 'dokter')
                         <div class="pt-4 pb-2">
@@ -90,7 +92,7 @@
                         <a href="{{ route('obats') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('obats') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Kelola Obat</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('farmasi.*') ? 'bg-gray-200' : '' }}">
+                        <a href="{{ route('farmasi') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('farmasi*') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Resep Masuk</span>
                         </a>
                     @endif

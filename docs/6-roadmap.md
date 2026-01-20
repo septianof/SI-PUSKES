@@ -113,7 +113,7 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 
 - [x] **Dashboard Kasir** (Bisa gabung menu Pendaftaran)
     - Menampilkan kunjungan status `payment`.
-- [ ] **Hitung Tagihan**
+- [x] **Hitung Tagihan**
     - Component: `Kasir/Pembayaran`
     - Query: Ambil biaya tarif poli + total harga obat.
     - Logika: Jika BPJS -> Total Rp 0 -> Masuk tabel `klaim_bpjs`.

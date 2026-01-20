@@ -50,4 +50,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/kasir', \App\Livewire\Kasir\AntreanBayar::class)->name('kasir');
         Route::get('/kasir/proses/{kunjungan}', \App\Livewire\Kasir\ProsesBayar::class)->name('kasir.proses');
     });
+
+    // Farmasi Routes (Role: Apoteker)
+    Route::middleware('role:apoteker')->group(function () {
+        Route::get('/farmasi', \App\Livewire\Farmasi\AntreanResep::class)->name('farmasi');
+        Route::get('/farmasi/proses/{kunjungan}', \App\Livewire\Farmasi\ProsesResep::class)->name('farmasi.proses');
+    });
 });
