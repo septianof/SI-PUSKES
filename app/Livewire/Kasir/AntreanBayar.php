@@ -3,9 +3,9 @@
 namespace App\Livewire\Kasir;
 
 use App\Models\Kunjungan;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Antrean Pembayaran - SI PUSKES')]
@@ -34,7 +34,7 @@ class AntreanBayar extends Component
     /**
      * Get status penjamin dari kunjungan.
      *
-     * @param \App\Models\Kunjungan $kunjungan
+     * @param  \App\Models\Kunjungan  $kunjungan
      * @return string
      */
     public function getStatusPenjamin($kunjungan)
@@ -45,7 +45,7 @@ class AntreanBayar extends Component
     /**
      * Redirect ke halaman proses bayar.
      *
-     * @param int $kunjunganId
+     * @param  int  $kunjunganId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function prosesBayar($kunjunganId)

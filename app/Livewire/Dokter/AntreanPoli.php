@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Dokter;
 
-use Livewire\Component;
 use App\Models\Kunjungan;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class AntreanPoli extends Component
 {
@@ -24,13 +24,14 @@ class AntreanPoli extends Component
     public function mount()
     {
         $user = Auth::user();
-        
+
         // Load poli information
         $this->poli = $user->poli;
 
         // If user doesn't have assigned poli, set empty collection
-        if (!$user->poli_id) {
+        if (! $user->poli_id) {
             $this->kunjungans = collect([]);
+
             return;
         }
 
@@ -76,6 +77,6 @@ class AntreanPoli extends Component
     {
         return view('livewire.dokter.antrean-poli')
             ->layout('layouts.app')
-            ->title('Antrean Poli - ' . ($this->poli->nama_poli ?? 'Tidak Ada Poli'));
+            ->title('Antrean Poli - '.($this->poli->nama_poli ?? 'Tidak Ada Poli'));
     }
 }

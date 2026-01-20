@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
         Illuminate\Support\Facades\Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
+
         return redirect('/login');
     })->name('logout');
 

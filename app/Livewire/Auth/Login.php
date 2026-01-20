@@ -13,7 +13,9 @@ class Login extends Component
 {
     // Properties untuk binding form
     public string $username = '';
+
     public string $password = '';
+
     public bool $remember = false;
 
     /**
@@ -59,7 +61,7 @@ class Login extends Component
             session()->regenerate();
 
             // Optional: Flash message sukses
-            session()->flash('success', 'Login berhasil! Selamat datang, ' . Auth::user()->name);
+            session()->flash('success', 'Login berhasil! Selamat datang, '.Auth::user()->name);
 
             // Redirect ke dashboard
             $this->redirect('/dashboard', navigate: true);

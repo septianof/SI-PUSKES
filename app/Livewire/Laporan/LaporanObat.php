@@ -3,17 +3,20 @@
 namespace App\Livewire\Laporan;
 
 use App\Models\DetailResep;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Laporan Pemakaian Obat - SI PUSKES')]
 class LaporanObat extends Component
 {
     public $tglMulai;
+
     public $tglAkhir;
+
     public $dataObat = [];
+
     public $showResults = false;
 
     /**
@@ -52,17 +55,17 @@ class LaporanObat extends Component
 
         // Query detail resep dengan filter kunjungan dalam periode
         $detailReseps = DetailResep::with(['obat', 'resep.rekamMedis.kunjungan'])
-            ->whereHas('resep.rekamMedis.kunjungan', function($query) {
-                $query->whereBetween('tgl_kunjungan', [$this->tglMulai . ' 00:00:00', $this->tglAkhir . ' 23:59:59']);
+            ->whereHas('resep.rekamMedis.kunjungan', function ($query) {
+                $query->whereBetween('tgl_kunjungan', [$this->tglMulai.' 00:00:00', $this->tglAkhir.' 23:59:59']);
             })
             ->get();
 
         // Group by obat_id dan aggregate
         $this->dataObat = $detailReseps->groupBy('obat_id')
-            ->map(function($items) {
+            ->map(function ($items) {
                 $obat = $items->first()->obat;
                 $totalJumlah = $items->sum('jumlah');
-                
+
                 return [
                     'obat_id' => $obat->id,
                     'nama_obat' => $obat->nama_obat,
@@ -81,9 +84,9 @@ class LaporanObat extends Component
         $this->showResults = true;
 
         \Log::info('Laporan Obat Generated', [
-            'periode' => $this->tglMulai . ' - ' . $this->tglAkhir,
+            'periode' => $this->tglMulai.' - '.$this->tglAkhir,
             'total_obat' => count($this->dataObat),
-            'total_digunakan' => collect($this->dataObat)->sum('total_digunakan')
+            'total_digunakan' => collect($this->dataObat)->sum('total_digunakan'),
         ]);
     }
 
@@ -101,6 +104,7 @@ class LaporanObat extends Component
     public function getTotalSummaryProperty()
     {
         $data = collect($this->dataObat);
+
         return [
             'total_jenis_obat' => $data->count(),
             'total_digunakan' => $data->sum('total_digunakan'),

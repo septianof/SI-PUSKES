@@ -102,9 +102,7 @@
                         <div class="pt-4 pb-2">
                             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Kepala Puskesmas</p>
                         </div>
-                        <div class="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Laporan
-                        </div>
+
                         <a href="{{ route('laporan.kunjungan') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md {{ request()->routeIs('laporan.kunjungan') ? 'bg-gray-200 font-semibold' : '' }}">
                             <span class="font-medium">Kunjungan Poli</span>
                         </a>

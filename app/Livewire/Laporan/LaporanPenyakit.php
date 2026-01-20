@@ -3,18 +3,21 @@
 namespace App\Livewire\Laporan;
 
 use App\Models\RekamMedis;
-use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Laporan 10 Penyakit Terbanyak - SI PUSKES')]
 class LaporanPenyakit extends Component
 {
     public $tglMulai;
+
     public $tglAkhir;
+
     public $dataPenyakit = [];
+
     public $showResults = false;
 
     /**
@@ -52,7 +55,7 @@ class LaporanPenyakit extends Component
         $this->validate();
 
         // Query untuk mendapatkan top 10 diagnosis
-        $results = RekamMedis::whereBetween('tgl_periksa', [$this->tglMulai . ' 00:00:00', $this->tglAkhir . ' 23:59:59'])
+        $results = RekamMedis::whereBetween('tgl_periksa', [$this->tglMulai.' 00:00:00', $this->tglAkhir.' 23:59:59'])
             ->whereNotNull('diagnosa')
             ->where('diagnosa', '!=', '')
             ->select('diagnosa', DB::raw('count(*) as jumlah'))
@@ -65,7 +68,7 @@ class LaporanPenyakit extends Component
         $totalKasus = $results->sum('jumlah');
 
         // Transform dengan ranking dan percentage
-        $this->dataPenyakit = $results->map(function($item, $index) use ($totalKasus) {
+        $this->dataPenyakit = $results->map(function ($item, $index) use ($totalKasus) {
             return [
                 'ranking' => $index + 1,
                 'diagnosa' => $item->diagnosa,
@@ -77,9 +80,9 @@ class LaporanPenyakit extends Component
         $this->showResults = true;
 
         \Log::info('Laporan Penyakit Generated', [
-            'periode' => $this->tglMulai . ' - ' . $this->tglAkhir,
+            'periode' => $this->tglMulai.' - '.$this->tglAkhir,
             'total_unique_diseases' => count($this->dataPenyakit),
-            'total_kasus' => $totalKasus
+            'total_kasus' => $totalKasus,
         ]);
     }
 

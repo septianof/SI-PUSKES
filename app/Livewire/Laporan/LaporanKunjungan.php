@@ -3,17 +3,20 @@
 namespace App\Livewire\Laporan;
 
 use App\Models\Kunjungan;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Laporan Kunjungan Poli - SI PUSKES')]
 class LaporanKunjungan extends Component
 {
     public $tglMulai;
+
     public $tglAkhir;
+
     public $dataKunjungan = [];
+
     public $showResults = false;
 
     /**
@@ -52,13 +55,14 @@ class LaporanKunjungan extends Component
 
         // Query kunjungan dengan eager loading poli
         $kunjungans = Kunjungan::with('poli')
-            ->whereBetween('tgl_kunjungan', [$this->tglMulai . ' 00:00:00', $this->tglAkhir . ' 23:59:59'])
+            ->whereBetween('tgl_kunjungan', [$this->tglMulai.' 00:00:00', $this->tglAkhir.' 23:59:59'])
             ->get();
 
         // Group by poli_id dan hitung statistik
         $this->dataKunjungan = $kunjungans->groupBy('poli_id')
-            ->map(function($items, $poliId) {
+            ->map(function ($items, $poliId) {
                 $poli = $items->first()->poli;
+
                 return [
                     'poli_id' => $poli->id,
                     'nama_poli' => $poli->nama_poli,
@@ -74,9 +78,9 @@ class LaporanKunjungan extends Component
         $this->showResults = true;
 
         \Log::info('Laporan Kunjungan Generated', [
-            'periode' => $this->tglMulai . ' - ' . $this->tglAkhir,
+            'periode' => $this->tglMulai.' - '.$this->tglAkhir,
             'total_poli' => count($this->dataKunjungan),
-            'total_kunjungan' => collect($this->dataKunjungan)->sum('total_kunjungan')
+            'total_kunjungan' => collect($this->dataKunjungan)->sum('total_kunjungan'),
         ]);
     }
 
@@ -86,6 +90,7 @@ class LaporanKunjungan extends Component
     public function getTotalSummaryProperty()
     {
         $data = collect($this->dataKunjungan);
+
         return [
             'total_kunjungan' => $data->sum('total_kunjungan'),
             'total_umum' => $data->sum('pasien_umum'),

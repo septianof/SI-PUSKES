@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\DetailResep;
 use App\Models\Kunjungan;
+use App\Models\Pembayaran;
 use App\Models\RekamMedis;
 use App\Models\Resep;
-use App\Models\DetailResep;
-use App\Models\Pembayaran;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class KunjunganSeeder extends Seeder
 {
     private $faker;
+
     private $diagnosaList = [
         'ISPA (Infeksi Saluran Pernapasan Akut)',
         'Hipertensi',
@@ -45,7 +46,7 @@ class KunjunganSeeder extends Seeder
         // - 7 obat (4 Umum + 3 BPJS)
         // Completed visits (can reuse patients):
         // - 25 selesai (13 Umum + 12 BPJS) - including repeat patients
-        
+
         $pasienIds = range(1, 20); // 20 pasien
         shuffle($pasienIds); // Randomize
 
@@ -56,7 +57,7 @@ class KunjunganSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             $pasienId = array_shift($pasienIds);
             $usedPasienIds[] = $pasienId;
-            
+
             $this->createKunjungan([
                 'pasien_id' => $pasienId,
                 'poli_id' => rand(1, 5),
@@ -71,7 +72,7 @@ class KunjunganSeeder extends Seeder
         for ($i = 0; $i < 3; $i++) {
             $pasienId = array_shift($pasienIds);
             $usedPasienIds[] = $pasienId;
-            
+
             $kunjungan = $this->createKunjungan([
                 'pasien_id' => $pasienId,
                 'poli_id' => rand(1, 5),
@@ -79,7 +80,7 @@ class KunjunganSeeder extends Seeder
                 'status' => 'bayar',
                 'metode_bayar' => 'Umum',
             ]);
-            
+
             // Add RekamMedis + optional Resep
             $this->createRekamMedis($kunjungan, rand(0, 1) == 1);
         }
@@ -88,7 +89,7 @@ class KunjunganSeeder extends Seeder
         for ($i = 0; $i < 7; $i++) {
             $pasienId = array_shift($pasienIds);
             $usedPasienIds[] = $pasienId;
-            
+
             $kunjungan = $this->createKunjungan([
                 'pasien_id' => $pasienId,
                 'poli_id' => rand(1, 5),
@@ -97,10 +98,10 @@ class KunjunganSeeder extends Seeder
                 'metode_bayar' => $i < 4 ? 'Umum' : 'BPJS',
                 'no_bpjs' => $i < 4 ? null : $this->generateNoBpjs(),
             ]);
-            
+
             // Add RekamMedis + Resep (wajib untuk status obat)
             $this->createRekamMedis($kunjungan, true);
-            
+
             // Add Pembayaran jika Umum
             if ($i < 4) {
                 $this->createPembayaran($kunjungan);
@@ -116,7 +117,7 @@ class KunjunganSeeder extends Seeder
             // Cycle through all patients to allow multiple completed visits
             $pasienId = $allPasienIds[$i % 20];
             $metodeBayar = $i < 13 ? 'Umum' : 'BPJS';
-            
+
             $kunjungan = $this->createKunjungan([
                 'pasien_id' => $pasienId,
                 'poli_id' => rand(1, 5),
@@ -125,11 +126,11 @@ class KunjunganSeeder extends Seeder
                 'metode_bayar' => $metodeBayar,
                 'no_bpjs' => $metodeBayar === 'BPJS' ? $this->generateNoBpjs() : null,
             ]);
-            
+
             // Add RekamMedis + Resep (70% chance)
             $withResep = rand(1, 10) <= 7;
             $this->createRekamMedis($kunjungan, $withResep);
-            
+
             // Add Pembayaran jika Umum
             if ($metodeBayar === 'Umum') {
                 $this->createPembayaran($kunjungan);
@@ -210,7 +211,7 @@ class KunjunganSeeder extends Seeder
     {
         // Calculate total based on poli tarif + obat (if any)
         $tarifPendaftaran = $kunjungan->poli->tarif_daftar;
-        
+
         // Get obat cost if resep exists
         $biayaObat = 0;
         if ($kunjungan->rekamMedis && $kunjungan->rekamMedis->resep) {
@@ -260,7 +261,7 @@ class KunjunganSeeder extends Seeder
      */
     private function generateTandaVital(): string
     {
-        $tensi = rand(100, 140) . '/' . rand(60, 90);
+        $tensi = rand(100, 140).'/'.rand(60, 90);
         $nadi = rand(60, 100);
         $suhu = number_format(rand(360, 380) / 10, 1);
         $respirasi = rand(16, 24);

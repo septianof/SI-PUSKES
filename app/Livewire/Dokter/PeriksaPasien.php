@@ -2,39 +2,51 @@
 
 namespace App\Livewire\Dokter;
 
-use Livewire\Component;
-use App\Models\Kunjungan;
-use App\Models\RekamMedis;
-use App\Models\Obat;
-use App\Models\Resep;
 use App\Models\DetailResep;
+use App\Models\Kunjungan;
+use App\Models\Obat;
+use App\Models\RekamMedis;
+use App\Models\Resep;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class PeriksaPasien extends Component
 {
     // Kunjungan & Pasien Data
     public $kunjungan;
+
     public $pasien;
+
     public $poli;
-    
+
     // Riwayat Kunjungan
     public $riwayatKunjungan = [];
-    
+
     // Form Input Properties
     public $tensi = '';
+
     public $bb = '';
+
     public $tb = '';
+
     public $suhu = '';
+
     public $keluhan = '';
+
     public $diagnosa = '';
+
     public $tindakan = '';
-    
+
     // Prescription Cart Properties
     public $resepList = []; // Array of selected medicines
+
     public $selectedObat = ''; // Currently selected medicine ID
+
     public $jumlah = 1; // Quantity
+
     public $dosis = ''; // Dosage (e.g., "3x1")
+
     public $obatOptions = []; // Available medicines from database
 
     /**
@@ -45,22 +57,22 @@ class PeriksaPasien extends Component
         // Load kunjungan dengan relasi
         $this->kunjungan = Kunjungan::with(['pasien', 'poli'])
             ->findOrFail($kunjungan);
-        
+
         // Authorization: Pastikan kunjungan milik poli dokter yang login
         if ($this->kunjungan->poli_id !== Auth::user()->poli_id) {
             abort(403, 'Anda tidak memiliki akses ke kunjungan ini.');
         }
-        
+
         // Load pasien & poli
         $this->pasien = $this->kunjungan->pasien;
         $this->poli = $this->kunjungan->poli;
-        
+
         // Pre-fill keluhan dari keluhan awal kunjungan
         $this->keluhan = $this->kunjungan->keluhan_awal ?? '';
-        
+
         // Load riwayat kunjungan pasien (kunjungan sebelumnya yang sudah selesai)
         $this->loadRiwayatKunjungan();
-        
+
         // Load available medicines for prescription
         $this->loadObatOptions();
     }
@@ -84,14 +96,14 @@ class PeriksaPasien extends Component
      */
     public function getUmurProperty()
     {
-        if (!$this->pasien || !$this->pasien->tgl_lahir) {
+        if (! $this->pasien || ! $this->pasien->tgl_lahir) {
             return '-';
         }
-        
+
         $birthDate = \Carbon\Carbon::parse($this->pasien->tgl_lahir);
         $age = $birthDate->age;
-        
-        return $age . ' tahun';
+
+        return $age.' tahun';
     }
 
     /**
@@ -139,12 +151,12 @@ class PeriksaPasien extends Component
 
         // Get medicine data
         $obat = Obat::find($this->selectedObat);
-        
+
         // Check if medicine already in cart
-        $existingIndex = collect($this->resepList)->search(function($item) use ($obat) {
+        $existingIndex = collect($this->resepList)->search(function ($item) use ($obat) {
             return $item['obat_id'] == $obat->id;
         });
-        
+
         if ($existingIndex !== false) {
             // Update existing item
             $this->resepList[$existingIndex]['jumlah'] += $this->jumlah;
@@ -157,12 +169,12 @@ class PeriksaPasien extends Component
                 'dosis' => $this->dosis,
             ];
         }
-        
+
         // Reset form
         $this->selectedObat = '';
         $this->jumlah = 1;
         $this->dosis = '';
-        
+
         session()->flash('obat_added', 'Obat berhasil ditambahkan ke resep');
     }
 
@@ -234,7 +246,7 @@ class PeriksaPasien extends Component
 
                 // 3. Update status based on patient type (BPJS vs Umum)
                 $isBpjs = ($this->kunjungan->metode_bayar === 'BPJS');
-                
+
                 if ($isBpjs) {
                     // BPJS: Langsung ke farmasi (jika ada resep) atau selesai
                     if (count($this->resepList) > 0) {
@@ -249,15 +261,15 @@ class PeriksaPasien extends Component
                     $this->kunjungan->update(['status' => 'bayar']);
                     $statusMessage = 'Pemeriksaan selesai. Pasien diarahkan ke Kasir untuk pembayaran.';
                 }
-                
+
                 session()->flash('success', $statusMessage);
             });
 
             // Redirect back to queue dashboard
             return redirect()->route('dokter.antrean');
-            
+
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -268,6 +280,6 @@ class PeriksaPasien extends Component
     {
         return view('livewire.dokter.periksa-pasien')
             ->layout('components.layouts.app')
-            ->title('Pemeriksaan Pasien - ' . ($this->pasien->nama ?? ''));
+            ->title('Pemeriksaan Pasien - '.($this->pasien->nama ?? ''));
     }
 }

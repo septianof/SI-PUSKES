@@ -3,10 +3,10 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Poli;
-use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Kelola Poliklinik - SI PUSKES')]
@@ -16,16 +16,21 @@ class Polis extends Component
 
     // Properties untuk Form Input
     public $nama_poli = '';
+
     public $lokasi = '';
+
     public $tarif_daftar = '';
 
     // Properties untuk State Management
     public $poliId = null;
+
     public $isEditMode = false;
+
     public $showModal = false;
 
     // Search & Filter
     public $search = '';
+
     public $perPage = 10;
 
     // Validation Messages
@@ -53,8 +58,8 @@ class Polis extends Component
     {
         $polis = Poli::query()
             ->when($this->search, function ($query) {
-                $query->where('nama_poli', 'like', '%' . $this->search . '%')
-                    ->orWhere('lokasi', 'like', '%' . $this->search . '%');
+                $query->where('nama_poli', 'like', '%'.$this->search.'%')
+                    ->orWhere('lokasi', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
@@ -80,12 +85,12 @@ class Polis extends Component
     public function edit($id)
     {
         $poli = Poli::findOrFail($id);
-        
+
         $this->poliId = $poli->id;
         $this->nama_poli = $poli->nama_poli;
         $this->lokasi = $poli->lokasi;
         $this->tarif_daftar = $poli->tarif_daftar;
-        
+
         $this->isEditMode = true;
         $this->showModal = true;
     }
@@ -106,13 +111,13 @@ class Polis extends Component
             if ($this->isEditMode) {
                 // Update Existing Poli
                 $poli = Poli::findOrFail($this->poliId);
-                
+
                 $poli->nama_poli = $this->nama_poli;
                 $poli->lokasi = $this->lokasi;
                 $poli->tarif_daftar = $this->tarif_daftar;
-                
+
                 $poli->save();
-                
+
                 session()->flash('success', 'Data poli berhasil diupdate.');
             } else {
                 // Create New Poli
@@ -121,7 +126,7 @@ class Polis extends Component
                     'lokasi' => $this->lokasi,
                     'tarif_daftar' => $this->tarif_daftar,
                 ]);
-                
+
                 session()->flash('success', 'Data poli baru berhasil ditambahkan.');
             }
 
@@ -130,7 +135,7 @@ class Polis extends Component
             $this->showModal = false;
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -141,18 +146,19 @@ class Polis extends Component
     {
         try {
             $poli = Poli::findOrFail($id);
-            
+
             // Cek apakah poli masih digunakan di kunjungan
             if ($poli->kunjungans()->count() > 0) {
                 session()->flash('error', 'Poli tidak dapat dihapus karena masih memiliki data kunjungan.');
+
                 return;
             }
-            
+
             $poli->delete();
             session()->flash('success', 'Data poli berhasil dihapus.');
-            
+
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 

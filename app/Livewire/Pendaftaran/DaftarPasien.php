@@ -2,13 +2,12 @@
 
 namespace App\Livewire\Pendaftaran;
 
+use App\Models\Kunjungan;
 use App\Models\Pasien;
 use App\Models\Poli;
-use App\Models\Kunjungan;
-use Illuminate\Support\Facades\DB;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Pendaftaran Pasien - SI PUSKES')]
@@ -16,23 +15,32 @@ class DaftarPasien extends Component
 {
     // Properties untuk Search
     public $search = '';
+
     public $searchResults = [];
 
     // Properties untuk Selected Pasien
     public $selectedPasienId = null;
+
     public $selectedPasien = null;
 
     // Properties untuk Form Registrasi Pasien Baru
     public $showModalPasienBaru = false;
+
     public $nik = '';
+
     public $nama = '';
+
     public $tgl_lahir = '';
+
     public $alamat = '';
+
     public $no_bpjs = '';
 
     // Properties untuk Form Kunjungan
     public $poli_id = '';
+
     public $metode_bayar = 'Umum';
+
     public $keluhan_awal = '';
 
     // Data untuk Dropdown
@@ -40,6 +48,7 @@ class DaftarPasien extends Component
 
     // Status kunjungan berhasil
     public $kunjunganBerhasil = false;
+
     public $noAntrean = null;
 
     // Validation Messages
@@ -98,9 +107,9 @@ class DaftarPasien extends Component
     {
         $this->searchResults = Pasien::query()
             ->where(function ($query) {
-                $query->where('nik', 'like', '%' . $this->search . '%')
-                    ->orWhere('nama', 'like', '%' . $this->search . '%')
-                    ->orWhere('no_rm', 'like', '%' . $this->search . '%');
+                $query->where('nik', 'like', '%'.$this->search.'%')
+                    ->orWhere('nama', 'like', '%'.$this->search.'%')
+                    ->orWhere('no_rm', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->limit(10)
@@ -114,7 +123,7 @@ class DaftarPasien extends Component
     {
         $this->selectedPasienId = $pasienId;
         $this->selectedPasien = Pasien::find($pasienId);
-        
+
         // Clear search
         $this->search = '';
         $this->searchResults = [];
@@ -192,16 +201,16 @@ class DaftarPasien extends Component
             $this->showModalPasienBaru = false;
             $this->resetFormPasienBaru();
 
-            session()->flash('success', 'Pasien baru berhasil didaftarkan dengan No RM: ' . $noRm);
+            session()->flash('success', 'Pasien baru berhasil didaftarkan dengan No RM: '.$noRm);
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     /**
      * Generate No RM otomatis dengan format YYYYMM-XXX
-     * 
+     *
      * @return string
      */
     private function generateNoRm()
@@ -211,7 +220,7 @@ class DaftarPasien extends Component
 
         // Cari pasien terakhir di bulan ini
         $lastPasien = Pasien::query()
-            ->where('no_rm', 'like', $yearMonth . '-%')
+            ->where('no_rm', 'like', $yearMonth.'-%')
             ->orderBy('no_rm', 'desc')
             ->first();
 
@@ -227,7 +236,7 @@ class DaftarPasien extends Component
         // Format nomor urut dengan leading zeros (3 digit)
         $formattedNumber = str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
-        return $yearMonth . '-' . $formattedNumber;
+        return $yearMonth.'-'.$formattedNumber;
     }
 
     /**
@@ -249,8 +258,9 @@ class DaftarPasien extends Component
     public function storeKunjungan()
     {
         // Pastikan pasien sudah dipilih
-        if (!$this->selectedPasienId) {
+        if (! $this->selectedPasienId) {
             session()->flash('error', 'Silakan pilih pasien terlebih dahulu.');
+
             return;
         }
 
@@ -262,14 +272,15 @@ class DaftarPasien extends Component
 
         if ($activeVisit) {
             $poli = $activeVisit->poli->nama_poli;
-            $statusLabel = match($activeVisit->status) {
+            $statusLabel = match ($activeVisit->status) {
                 'menunggu' => 'menunggu antrian',
                 'bayar' => 'di kasir',
                 'obat' => 'di farmasi',
                 default => 'aktif'
             };
-            
+
             session()->flash('error', "Pasien masih memiliki kunjungan aktif ({$statusLabel}) di {$poli}. Silakan selesaikan kunjungan tersebut terlebih dahulu.");
+
             return;
         }
 
@@ -307,13 +318,13 @@ class DaftarPasien extends Component
             $this->noAntrean = $kunjungan->id; // Bisa diganti dengan format nomor antrean custom
 
             // Flash success message
-            session()->flash('success', 'Pendaftaran kunjungan berhasil! Nomor Antrean: ' . $this->noAntrean);
+            session()->flash('success', 'Pendaftaran kunjungan berhasil! Nomor Antrean: '.$this->noAntrean);
 
             // Reset form kunjungan
             $this->resetFormKunjungan();
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -339,34 +350,6 @@ class DaftarPasien extends Component
         $this->clearSelectedPasien();
         $this->kunjunganBerhasil = false;
         $this->noAntrean = null;
-    }
-
-    /**
-     * Generate No SEP lokal untuk pembelajaran
-     * Format: SEP-YYYYMMDD-XXX
-     * Example: SEP-20260119-001
-     * 
-     * @return string
-     */
-    private function generateNoSep()
-    {
-        $datePrefix = now()->format('Ymd'); // 20260119
-        
-        // Cari SEP terakhir hari ini
-        $lastSep = KlaimBpjs::where('no_sep', 'like', "SEP-{$datePrefix}-%")
-            ->orderBy('no_sep', 'desc')
-            ->first();
-        
-        if ($lastSep) {
-            // Ambil 3 digit terakhir dan increment
-            $lastNumber = (int) substr($lastSep->no_sep, -3);
-            $newNumber = $lastNumber + 1;
-        } else {
-            $newNumber = 1;
-        }
-        
-        // Format: SEP-20260119-001
-        return "SEP-{$datePrefix}-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**

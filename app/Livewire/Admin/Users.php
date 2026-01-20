@@ -4,10 +4,10 @@ namespace App\Livewire\Admin;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Kelola Pengguna - SI PUSKES')]
@@ -17,17 +17,23 @@ class Users extends Component
 
     // Properties untuk Form Input
     public $nama_lengkap = '';
+
     public $username = '';
+
     public $password = '';
+
     public $role = '';
 
     // Properties untuk State Management
     public $userId = null;
+
     public $isEditMode = false;
+
     public $showModal = false;
 
     // Search & Filter
     public $search = '';
+
     public $perPage = 10;
 
     // Role Options (sesuai dengan class diagram)
@@ -67,9 +73,9 @@ class Users extends Component
     {
         $users = User::query()
             ->when($this->search, function ($query) {
-                $query->where('nama_lengkap', 'like', '%' . $this->search . '%')
-                    ->orWhere('username', 'like', '%' . $this->search . '%')
-                    ->orWhere('role', 'like', '%' . $this->search . '%');
+                $query->where('nama_lengkap', 'like', '%'.$this->search.'%')
+                    ->orWhere('username', 'like', '%'.$this->search.'%')
+                    ->orWhere('role', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
@@ -95,13 +101,13 @@ class Users extends Component
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        
+
         $this->userId = $user->id;
         $this->nama_lengkap = $user->nama_lengkap;
         $this->username = $user->username;
         $this->role = $user->role;
         $this->password = ''; // Kosongkan password saat edit
-        
+
         $this->isEditMode = true;
         $this->showModal = true;
     }
@@ -114,14 +120,14 @@ class Users extends Component
         // Validation Rules
         $rules = [
             'nama_lengkap' => 'required|min:3',
-            'username' => 'required|min:3|unique:users,username' . ($this->isEditMode ? ',' . $this->userId : ''),
+            'username' => 'required|min:3|unique:users,username'.($this->isEditMode ? ','.$this->userId : ''),
             'role' => 'required|in:admin,pendaftaran,dokter,apoteker,kepala Puskesmas',
         ];
 
         // Password validation berbeda untuk Create vs Edit
         if ($this->isEditMode) {
             // Saat Edit: Password optional, tapi jika diisi minimal 6 karakter
-            if (!empty($this->password)) {
+            if (! empty($this->password)) {
                 $rules['password'] = 'min:6';
             }
         } else {
@@ -136,18 +142,18 @@ class Users extends Component
             if ($this->isEditMode) {
                 // Update Existing User
                 $user = User::findOrFail($this->userId);
-                
+
                 $user->nama_lengkap = $this->nama_lengkap;
                 $user->username = $this->username;
                 $user->role = $this->role;
-                
+
                 // Update password hanya jika diisi
-                if (!empty($this->password)) {
+                if (! empty($this->password)) {
                     $user->password = Hash::make($this->password);
                 }
-                
+
                 $user->save();
-                
+
                 session()->flash('success', 'User berhasil diupdate.');
             } else {
                 // Create New User
@@ -157,7 +163,7 @@ class Users extends Component
                     'password' => Hash::make($this->password), // Hash password
                     'role' => $this->role,
                 ]);
-                
+
                 session()->flash('success', 'User baru berhasil ditambahkan.');
             }
 
@@ -166,7 +172,7 @@ class Users extends Component
             $this->showModal = false;
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -177,18 +183,19 @@ class Users extends Component
     {
         try {
             $user = User::findOrFail($id);
-            
+
             // Cek agar tidak menghapus diri sendiri
             if ($user->id === auth()->id()) {
                 session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+
                 return;
             }
-            
+
             $user->delete();
             session()->flash('success', 'User berhasil dihapus.');
-            
+
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 

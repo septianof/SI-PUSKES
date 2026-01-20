@@ -4,15 +4,16 @@ namespace App\Livewire\Kasir;
 
 use App\Models\Kunjungan;
 use App\Models\Pembayaran;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Proses Pembayaran - SI PUSKES')]
 class ProsesBayar extends Component
 {
     public $kunjungan;
+
     public $bayarTunai = 0;
 
     /**
@@ -24,18 +25,20 @@ class ProsesBayar extends Component
         $this->kunjungan = Kunjungan::with([
             'pasien',
             'poli',
-            'rekamMedis.resep.detailReseps.obat'
+            'rekamMedis.resep.detailReseps.obat',
         ])->findOrFail($kunjungan);
 
         // Verify status is 'bayar'
         if ($this->kunjungan->status !== 'bayar') {
             session()->flash('error', 'Kunjungan ini tidak dalam status pembayaran.');
+
             return redirect()->route('kasir');
         }
 
         // PASTIKAN BUKAN PASIEN BPJS (double check security)
         if ($this->kunjungan->metode_bayar === 'BPJS') {
             session()->flash('error', 'Pasien BPJS tidak perlu melalui kasir.');
+
             return redirect()->route('kasir');
         }
     }
@@ -54,9 +57,11 @@ class ProsesBayar extends Component
     public function getBiayaObatProperty()
     {
         $resep = $this->kunjungan->rekamMedis?->resep;
-        if (!$resep) return 0;
+        if (! $resep) {
+            return 0;
+        }
 
-        return $resep->detailReseps->sum(function($detail) {
+        return $resep->detailReseps->sum(function ($detail) {
             return $detail->jumlah * $detail->obat->harga;
         });
     }
@@ -83,9 +88,11 @@ class ProsesBayar extends Component
     public function getDetailObatProperty()
     {
         $resep = $this->kunjungan->rekamMedis?->resep;
-        if (!$resep) return [];
+        if (! $resep) {
+            return [];
+        }
 
-        return $resep->detailReseps->map(function($detail) {
+        return $resep->detailReseps->map(function ($detail) {
             return [
                 'nama_obat' => $detail->obat->nama_obat,
                 'jumlah' => $detail->jumlah,
@@ -101,25 +108,23 @@ class ProsesBayar extends Component
      */
     public function finalisasiBayar()
     {
-        // Debug: Check if method is called
-        \Log::info('finalisasiBayar called', ['bayarTunai' => $this->bayarTunai, 'grandTotal' => $this->grandTotal]);
-
         // Validation
         $this->validate([
             'bayarTunai' => [
                 'required',
                 'numeric',
-                'min:' . $this->grandTotal
+                'min:'.$this->grandTotal,
             ],
         ], [
             'bayarTunai.required' => 'Jumlah bayar harus diisi',
             'bayarTunai.numeric' => 'Jumlah bayar harus berupa angka',
-            'bayarTunai.min' => 'Uang tidak cukup. Minimal: Rp ' . number_format($this->grandTotal, 0, ',', '.'),
+            'bayarTunai.min' => 'Uang tidak cukup. Minimal: Rp '.number_format($this->grandTotal, 0, ',', '.'),
         ]);
 
         // CEK DUPLIKASI: Pastikan belum ada pembayaran untuk kunjungan ini
         if (Pembayaran::where('kunjungan_id', $this->kunjungan->id)->exists()) {
             session()->flash('error', 'Transaksi pembayaran sudah berhasil diproses sebelumnya.');
+
             return $this->redirect(route('kasir'), navigate: true);
         }
 
@@ -133,20 +138,16 @@ class ProsesBayar extends Component
                 'status' => 'lunas',       // Match enum in migration (lowercase)
             ]);
 
-            \Log::info('Pembayaran created', ['id' => $pembayaran->id]);
-
             // 2. Update kunjungan status
             // Jika ada resep → 'obat' (ke farmasi), jika tidak → 'selesai'
             $hasResep = $this->kunjungan->rekamMedis?->resep !== null;
             $newStatus = $hasResep ? 'obat' : 'selesai';
-            
-            $this->kunjungan->update(['status' => $newStatus]);
 
-            \Log::info('Kunjungan updated', ['status' => $newStatus]);
+            $this->kunjungan->update(['status' => $newStatus]);
 
             // Success message
             $message = 'Pembayaran berhasil! ';
-            $message .= $hasResep 
+            $message .= $hasResep
                 ? 'Pasien diarahkan ke Farmasi untuk pengambilan obat.'
                 : 'Pasien sudah dapat pulang.';
 
@@ -156,7 +157,7 @@ class ProsesBayar extends Component
 
         } catch (\Exception $e) {
             \Log::error('Error in finalisasiBayar', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 

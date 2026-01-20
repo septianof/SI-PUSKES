@@ -3,9 +3,9 @@
 namespace App\Livewire\Farmasi;
 
 use App\Models\Kunjungan;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 #[Title('Antrean Resep - SI PUSKES')]
@@ -19,11 +19,11 @@ class AntreanResep extends Component
         return Kunjungan::with([
             'pasien',
             'poli',
-            'rekamMedis.resep.detailReseps.obat'
+            'rekamMedis.resep.detailReseps.obat',
         ])
-        ->where('status', 'obat')
-        ->orderBy('tgl_kunjungan', 'desc')
-        ->get();
+            ->where('status', 'obat')
+            ->orderBy('tgl_kunjungan', 'desc')
+            ->get();
     }
 
     /**
@@ -32,7 +32,9 @@ class AntreanResep extends Component
     public function getJumlahItem($kunjungan)
     {
         $resep = $kunjungan->rekamMedis?->resep;
-        if (!$resep) return 0;
+        if (! $resep) {
+            return 0;
+        }
 
         return $resep->detailReseps->count();
     }

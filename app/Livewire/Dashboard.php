@@ -2,11 +2,12 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use Livewire\Component;
+
 // Import models lain jika sudah ada (Kunjungan, Poli, Obat, dll)
 
 #[Layout('components.layouts.app')]
@@ -27,7 +28,7 @@ class Dashboard extends Component
     {
         // Default stats structure
         // [Label, Value, Icon (SVG path or component key), Color Class, Subtext]
-        
+
         // Note: Karena tabel transaksi belum diisi, kita gunakan query count() real yang akan return 0.
         // Jika model belum ada, kita return 0 hardcoded dulu untuk menghindari error.
 
@@ -39,22 +40,22 @@ class Dashboard extends Component
                         'value' => User::count(),
                         'icon' => 'users',
                         'color' => 'blue',
-                        'subtext' => 'User aktif sistem'
+                        'subtext' => 'User aktif sistem',
                     ],
                     [
                         'label' => 'Total Poli',
                         'value' => 0, // Poli::count() placeholder
                         'icon' => 'building-office',
                         'color' => 'green',
-                        'subtext' => 'Poliklinik tersedia'
+                        'subtext' => 'Poliklinik tersedia',
                     ],
                     [
                         'label' => 'Total Obat',
                         'value' => 0, // Obat::count() placeholder
                         'icon' => 'beaker',
                         'color' => 'yellow',
-                        'subtext' => 'Jenis obat terdaftar'
-                    ]
+                        'subtext' => 'Jenis obat terdaftar',
+                    ],
                 ];
 
             case 'pendaftaran':
@@ -64,54 +65,54 @@ class Dashboard extends Component
                         'value' => 0, // Kunjungan::where('status', 'waiting')->count()
                         'icon' => 'user-group',
                         'color' => 'blue',
-                        'subtext' => 'Perlu diproses'
+                        'subtext' => 'Perlu diproses',
                     ],
                     [
                         'label' => 'Pasien Baru',
                         'value' => 0, // Pasien::whereDate('created_at', today())->count()
                         'icon' => 'user-plus',
                         'color' => 'green',
-                        'subtext' => 'Hari ini'
+                        'subtext' => 'Hari ini',
                     ],
                     [
                         'label' => 'Selesai',
                         'value' => 0, // Kunjungan::where('status', 'finished')->count()
                         'icon' => 'check-circle',
                         'color' => 'purple',
-                        'subtext' => 'Hari ini'
-                    ]
+                        'subtext' => 'Hari ini',
+                    ],
                 ];
 
             case 'dokter':
                 $user = Auth::user();
                 $poliId = $user->poli_id;
-                
+
                 return [
                     [
                         'label' => 'Pasien Menunggu',
                         'value' => $poliId ? \App\Models\Kunjungan::where('poli_id', $poliId)
-                                                ->where('status', 'menunggu')
-                                                ->count() : 0,
+                            ->where('status', 'menunggu')
+                            ->count() : 0,
                         'icon' => 'stethoscope',
                         'color' => 'blue',
-                        'subtext' => 'Di Poli Anda'
+                        'subtext' => 'Di Poli Anda',
                     ],
                     [
                         'label' => 'Selesai Periksa',
                         'value' => 0, // TODO: Will be implemented when rekam medis module is done
                         'icon' => 'clipboard-document-check',
                         'color' => 'green',
-                        'subtext' => 'Hari ini'
+                        'subtext' => 'Hari ini',
                     ],
                     [
                         'label' => 'Total Pasien',
                         'value' => $poliId ? \App\Models\Kunjungan::where('poli_id', $poliId)
-                                                ->whereDate('tgl_kunjungan', today())
-                                                ->count() : 0,
+                            ->whereDate('tgl_kunjungan', today())
+                            ->count() : 0,
                         'icon' => 'users',
                         'color' => 'yellow',
-                        'subtext' => 'Hari ini'
-                    ]
+                        'subtext' => 'Hari ini',
+                    ],
                 ];
 
             case 'apoteker':
@@ -121,22 +122,22 @@ class Dashboard extends Component
                         'value' => 0, // Resep::where('status', 'waiting')->count()
                         'icon' => 'document-text',
                         'color' => 'red', // Merah biar notice
-                        'subtext' => 'Perlu disiapkan'
+                        'subtext' => 'Perlu disiapkan',
                     ],
                     [
                         'label' => 'Obat Stok Menipis',
                         'value' => 0, // Obat::where('stok', '<', 10)->count()
                         'icon' => 'exclamation-triangle',
                         'color' => 'yellow',
-                        'subtext' => 'Stok < 10'
+                        'subtext' => 'Stok < 10',
                     ],
                     [
                         'label' => 'Resep Selesai',
                         'value' => 0,
                         'icon' => 'check-badge',
                         'color' => 'green',
-                        'subtext' => 'Hari ini'
-                    ]
+                        'subtext' => 'Hari ini',
+                    ],
                 ];
 
             default: // kepala_puskesmas & fallback
@@ -146,22 +147,22 @@ class Dashboard extends Component
                         'value' => 150, // Placeholder angka yang user suka
                         'icon' => 'chart-bar',
                         'color' => 'blue',
-                        'subtext' => '+12% dari kemarin'
+                        'subtext' => '+12% dari kemarin',
                     ],
                     [
                         'label' => 'Pasien BPJS',
                         'value' => 85,
                         'icon' => 'credit-card',
                         'color' => 'green',
-                        'subtext' => '56% dari total'
+                        'subtext' => '56% dari total',
                     ],
                     [
                         'label' => 'Pendapatan',
                         'value' => 'Rp 0',
                         'icon' => 'currency-dollar',
                         'color' => 'purple',
-                        'subtext' => 'Estimasi hari ini'
-                    ]
+                        'subtext' => 'Estimasi hari ini',
+                    ],
                 ];
         }
     }

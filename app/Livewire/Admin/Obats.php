@@ -3,10 +3,10 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Obat;
-use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 #[Title('Kelola Obat - SI PUSKES')]
@@ -16,17 +16,23 @@ class Obats extends Component
 
     // Properties untuk Form Input
     public $nama_obat = '';
+
     public $jenis = '';
+
     public $stok = '';
+
     public $harga = '';
 
     // Properties untuk State Management
     public $obatId = null;
+
     public $isEditMode = false;
+
     public $showModal = false;
 
     // Search & Filter
     public $search = '';
+
     public $perPage = 10;
 
     // Jenis Obat Options
@@ -68,8 +74,8 @@ class Obats extends Component
     {
         $obats = Obat::query()
             ->when($this->search, function ($query) {
-                $query->where('nama_obat', 'like', '%' . $this->search . '%')
-                    ->orWhere('jenis', 'like', '%' . $this->search . '%');
+                $query->where('nama_obat', 'like', '%'.$this->search.'%')
+                    ->orWhere('jenis', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
@@ -95,13 +101,13 @@ class Obats extends Component
     public function edit($id)
     {
         $obat = Obat::findOrFail($id);
-        
+
         $this->obatId = $obat->id;
         $this->nama_obat = $obat->nama_obat;
         $this->jenis = $obat->jenis;
         $this->stok = $obat->stok;
         $this->harga = $obat->harga;
-        
+
         $this->isEditMode = true;
         $this->showModal = true;
     }
@@ -123,14 +129,14 @@ class Obats extends Component
             if ($this->isEditMode) {
                 // Update Existing Obat
                 $obat = Obat::findOrFail($this->obatId);
-                
+
                 $obat->nama_obat = $this->nama_obat;
                 $obat->jenis = $this->jenis;
                 $obat->stok = $this->stok;
                 $obat->harga = $this->harga;
-                
+
                 $obat->save();
-                
+
                 session()->flash('success', 'Data obat berhasil diupdate.');
             } else {
                 // Create New Obat
@@ -140,7 +146,7 @@ class Obats extends Component
                     'stok' => $this->stok,
                     'harga' => $this->harga,
                 ]);
-                
+
                 session()->flash('success', 'Data obat baru berhasil ditambahkan.');
             }
 
@@ -149,7 +155,7 @@ class Obats extends Component
             $this->showModal = false;
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
@@ -160,18 +166,19 @@ class Obats extends Component
     {
         try {
             $obat = Obat::findOrFail($id);
-            
+
             // Cek apakah obat masih digunakan di resep
             if ($obat->detailReseps()->count() > 0) {
                 session()->flash('error', 'Obat tidak dapat dihapus karena masih digunakan dalam resep.');
+
                 return;
             }
-            
+
             $obat->delete();
             session()->flash('success', 'Data obat berhasil dihapus.');
-            
+
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 

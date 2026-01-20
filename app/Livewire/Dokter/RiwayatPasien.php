@@ -2,19 +2,21 @@
 
 namespace App\Livewire\Dokter;
 
-use Livewire\Component;
 use App\Models\Pasien;
 use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class RiwayatPasien extends Component
 {
     // Search & Results
     public $searchQuery = '';
+
     public $patientResults = [];
-    
+
     // Selected Patient & Medical Records
     public $selectedPasien = null;
+
     public $rekamMedisList = [];
 
     /**
@@ -32,11 +34,11 @@ class RiwayatPasien extends Component
     public function loadInitialPatients()
     {
         $userPoliId = Auth::user()->poli_id;
-        
+
         // Get all patients who have ever visited this poli
-        $this->patientResults = Pasien::whereHas('kunjungans', function($query) use ($userPoliId) {
-                $query->where('poli_id', $userPoliId);
-            })
+        $this->patientResults = Pasien::whereHas('kunjungans', function ($query) use ($userPoliId) {
+            $query->where('poli_id', $userPoliId);
+        })
             ->orderBy('nama', 'asc')
             ->get();
     }
@@ -61,13 +63,13 @@ class RiwayatPasien extends Component
     public function searchPatients()
     {
         $userPoliId = Auth::user()->poli_id;
-        
-        $this->patientResults = Pasien::whereHas('kunjungans', function($query) use ($userPoliId) {
-                $query->where('poli_id', $userPoliId);
-            })
-            ->where(function($query) {
-                $query->where('nama', 'like', '%' . $this->searchQuery . '%')
-                      ->orWhere('no_rm', 'like', '%' . $this->searchQuery . '%');
+
+        $this->patientResults = Pasien::whereHas('kunjungans', function ($query) use ($userPoliId) {
+            $query->where('poli_id', $userPoliId);
+        })
+            ->where(function ($query) {
+                $query->where('nama', 'like', '%'.$this->searchQuery.'%')
+                    ->orWhere('no_rm', 'like', '%'.$this->searchQuery.'%');
             })
             ->orderBy('nama', 'asc')
             ->limit(50)
@@ -81,7 +83,7 @@ class RiwayatPasien extends Component
     {
         // Load selected patient
         $this->selectedPasien = Pasien::find($pasienId);
-        
+
         if ($this->selectedPasien) {
             $this->loadRekamMedis();
         }
@@ -93,14 +95,14 @@ class RiwayatPasien extends Component
      */
     public function loadRekamMedis()
     {
-        $this->rekamMedisList = RekamMedis::whereHas('kunjungan', function($query) {
-                $query->where('pasien_id', $this->selectedPasien->id);
-            })
+        $this->rekamMedisList = RekamMedis::whereHas('kunjungan', function ($query) {
+            $query->where('pasien_id', $this->selectedPasien->id);
+        })
             ->with([
-                'kunjungan.poli',
-                'dokter',
-                'resep.detailReseps.obat'
-            ])
+            'kunjungan.poli',
+            'dokter',
+            'resep.detailReseps.obat',
+        ])
             ->orderBy('tgl_periksa', 'desc')
             ->get();
     }
@@ -110,14 +112,14 @@ class RiwayatPasien extends Component
      */
     public function getUmurProperty()
     {
-        if (!$this->selectedPasien || !$this->selectedPasien->tgl_lahir) {
+        if (! $this->selectedPasien || ! $this->selectedPasien->tgl_lahir) {
             return '-';
         }
-        
+
         $birthDate = \Carbon\Carbon::parse($this->selectedPasien->tgl_lahir);
         $age = $birthDate->age;
-        
-        return $age . ' tahun';
+
+        return $age.' tahun';
     }
 
     /**
@@ -125,10 +127,10 @@ class RiwayatPasien extends Component
      */
     public function parseTandaVital($tandaVitalJson)
     {
-        if (!$tandaVitalJson) {
+        if (! $tandaVitalJson) {
             return null;
         }
-        
+
         return json_decode($tandaVitalJson, true);
     }
 

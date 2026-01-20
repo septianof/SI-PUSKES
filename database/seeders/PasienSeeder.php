@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Pasien;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class PasienSeeder extends Seeder
 {
@@ -19,7 +19,7 @@ class PasienSeeder extends Seeder
         // Generate 20 pasien dengan data yang realistis
         for ($i = 1; $i <= 20; $i++) {
             Pasien::create([
-                'no_rm' => $yearMonth . '-' . str_pad($i, 3, '0', STR_PAD_LEFT), // Format: 202601-001, 202601-002, etc.
+                'no_rm' => $yearMonth.'-'.str_pad($i, 3, '0', STR_PAD_LEFT), // Format: 202601-001, 202601-002, etc.
                 'nik' => $faker->numerify('################'), // 16 digit NIK
                 'nama' => $faker->name(),
                 'alamat' => $faker->address(),
