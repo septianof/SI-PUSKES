@@ -24,7 +24,6 @@ class KlaimBpjs extends Model
     protected $fillable = [
         'kunjungan_id',
         'no_sep',
-        'status_klaim',
         'tgl_pengajuan',
     ];
 

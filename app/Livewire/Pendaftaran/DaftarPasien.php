@@ -285,11 +285,10 @@ class DaftarPasien extends Component
             // Auto-generate SEP untuk pasien BPJS
             if ($this->metode_bayar === 'BPJS') {
                 $noSep = $this->generateNoSep();
-                
+                // Create klaim BPJS record
                 KlaimBpjs::create([
                     'kunjungan_id' => $kunjungan->id,
-                    'no_sep' => $noSep,
-                    'status_klaim' => 'pending',
+                    'no_sep' => $this->generateNoSep(),
                     'tgl_pengajuan' => now(),
                 ]);
             }

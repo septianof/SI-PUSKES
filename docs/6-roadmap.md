@@ -125,9 +125,9 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 💊 Tahap 8: Modul Farmasi (Apoteker)
 *Tujuan: Validasi stok dan penyerahan obat.*
 
-- [ ] **Dashboard Farmasi**
+- [x] **Dashboard Farmasi**
     - Menampilkan kunjungan dengan status `obat`.
-- [ ] **Proses Resep**
+- [x] **Proses Resep**
     - Component: `Farmasi/ProsesResep`
     - Tampil detail obat yang diminta dokter.
     - Logika: Validasi stok (Cukup/Kurang).

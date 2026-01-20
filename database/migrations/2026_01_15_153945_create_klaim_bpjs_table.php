@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('klaim_bpjs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kunjungan_id')->constrained('kunjungans')->onDelete('cascade');
-            $table->string('no_sep')->unique();
-            $table->enum('status_klaim', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            $table->string('no_sep', 20)->unique();
             $table->date('tgl_pengajuan');
             $table->timestamps();
         });
