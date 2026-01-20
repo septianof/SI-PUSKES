@@ -5,7 +5,6 @@ namespace App\Livewire\Pendaftaran;
 use App\Models\Pasien;
 use App\Models\Poli;
 use App\Models\Kunjungan;
-use App\Models\KlaimBpjs;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -282,16 +281,7 @@ class DaftarPasien extends Component
                 'keluhan_awal' => $this->keluhan_awal,
             ]);
 
-            // Auto-generate SEP untuk pasien BPJS
-            if ($this->metode_bayar === 'BPJS') {
-                $noSep = $this->generateNoSep();
-                // Create klaim BPJS record
-                KlaimBpjs::create([
-                    'kunjungan_id' => $kunjungan->id,
-                    'no_sep' => $this->generateNoSep(),
-                    'tgl_pengajuan' => now(),
-                ]);
-            }
+            // BPJS patient - No additional claims record needed
 
             // Set status berhasil
             $this->kunjunganBerhasil = true;

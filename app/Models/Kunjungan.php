@@ -64,12 +64,4 @@ class Kunjungan extends Model
     {
         return $this->hasOne(Pembayaran::class, 'kunjungan_id');
     }
-
-    /**
-     * Get the klaim BPJS for this kunjungan.
-     */
-    public function klaimBpjs()
-    {
-        return $this->hasOne(KlaimBpjs::class, 'kunjungan_id');
-    }
 }
