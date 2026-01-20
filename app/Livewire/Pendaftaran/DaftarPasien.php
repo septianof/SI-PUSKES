@@ -254,6 +254,25 @@ class DaftarPasien extends Component
             return;
         }
 
+        // CRITICAL: Check for active visits (prevent double registration)
+        $activeVisit = Kunjungan::with('poli')
+            ->where('pasien_id', $this->selectedPasienId)
+            ->whereIn('status', ['menunggu', 'bayar', 'obat'])
+            ->first();
+
+        if ($activeVisit) {
+            $poli = $activeVisit->poli->nama_poli;
+            $statusLabel = match($activeVisit->status) {
+                'menunggu' => 'menunggu antrian',
+                'bayar' => 'di kasir',
+                'obat' => 'di farmasi',
+                default => 'aktif'
+            };
+            
+            session()->flash('error', "Pasien masih memiliki kunjungan aktif ({$statusLabel}) di {$poli}. Silakan selesaikan kunjungan tersebut terlebih dahulu.");
+            return;
+        }
+
         // Validation Rules
         $rules = [
             'poli_id' => 'required|exists:polis,id',
