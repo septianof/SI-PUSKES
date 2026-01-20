@@ -139,11 +139,11 @@ Dokumen ini berisi tahapan pengerjaan aplikasi menggunakan MySQL, Laravel, Livew
 ## 📊 Tahap 9: Laporan & Finishing
 *Tujuan: Kebutuhan Kepala Puskesmas.*
 
-- [ ] **Laporan Kunjungan**
+- [x] **Laporan Kunjungan**
     - Filter *Date Range*.
     - Export ke PDF (gunakan library `barryvdh/laravel-dompdf`).
-- [ ] **Laporan 10 Penyakit Terbanyak**
+- [x] **Laporan 10 Penyakit Terbanyak**
     - Query SQL `GROUP BY` diagnosa & `COUNT`.
-- [ ] **Final Check**
+- [x] **Final Check**
     - Cek UI Responsiveness.
     - Hapus data dummy.
