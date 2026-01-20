@@ -78,13 +78,6 @@ class Pembayaran {
     +status : string
 }
 
-class KlaimBPJS {
-    +idKlaim : int
-    +noSEP : string
-    +statusKlaim : string
-    +tglPengajuan : date
-}
-
 class Laporan {
     ' Kelas representasi untuk modul laporan
     +periode : string

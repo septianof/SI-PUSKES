@@ -2,78 +2,22 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // PENTING: Seed Poli dan Obat DULU sebelum users (karena dokter butuh poli_id)
+        // URUTAN PENTING: Seed sesuai dependency order
         $this->call([
-            PoliSeeder::class,
-            ObatSeeder::class,
-        ]);
-
-        // Menambahkan 6 user dummy statis untuk testing
-        // Password default: password123
-        
-        // 1. Admin
-        User::create([
-            'username' => 'admin',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Administrator',
-            'role' => 'admin',
-        ]);
-
-        // 2. Pendaftaran
-        User::create([
-            'username' => 'pendaftaran',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Petugas Pendaftaran',
-            'role' => 'pendaftaran',
-        ]);
-
-        // 3. Dokter Poli Umum
-        User::create([
-            'username' => 'dokter1',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Dr. Ahmad Hidayat',
-            'role' => 'dokter',
-            'poli_id' => 1, // Poli Umum
-        ]);
-
-        // 3b. Dokter Poli Gigi
-        User::create([
-            'username' => 'dokter2',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Dr. Siti Rahmawati',
-            'role' => 'dokter',
-            'poli_id' => 2, // Poli Gigi
-        ]);
-
-        // 4. Apoteker
-        User::create([
-            'username' => 'apoteker',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Apt. Siti Nurjanah',
-            'role' => 'apoteker',
-        ]);
-
-        // 5. Kepala Puskesmas
-        User::create([
-            'username' => 'kepala',
-            'password' => Hash::make('password123'),
-            'nama_lengkap' => 'Dr. Budi Santoso, M.Kes',
-            'role' => 'kepala Puskesmas',
+            PoliSeeder::class,        // 1. Poli dulu (dokter butuh poli_id)
+            ObatSeeder::class,        // 2. Obat (resep butuh obat_id)
+            UserSeeder::class,        // 3. Users (termasuk 5 dokter per poli)
+            PasienSeeder::class,      // 4. Pasien (kunjungan butuh pasien_id)
+            KunjunganSeeder::class,   // 5. Kunjungan + relasi (terakhir)
         ]);
     }
 }
-
