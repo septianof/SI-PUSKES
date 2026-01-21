@@ -23,6 +23,10 @@ Route::middleware('auth')->group(function () {
         return redirect('/login');
     })->name('logout');
 
+    // Ganti Password - Available for all roles
+    Route::get('/ganti-password', \App\Livewire\GantiPassword::class)->name('ganti-password');
+
+
     // Admin Routes - User Management & Master Data
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');

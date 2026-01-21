@@ -167,7 +167,7 @@
                                     <p class="text-sm text-gray-500">Login sebagai:</p>
                                     <p class="text-sm font-semibold text-gray-800 truncate">{{ Auth::user()->nama_lengkap ?? Auth::user()->username }}</p>
                                 </div>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="{{ route('ganti-password') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ganti Password</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600">
