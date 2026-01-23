@@ -23,7 +23,7 @@
 
             <!-- Username Input -->
             <div>
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username / NIP</label>
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

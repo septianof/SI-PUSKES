@@ -5,7 +5,7 @@
 Aplikasi ini dibangun sebagai tugas kuliah Rekayasa Perangkat Lunak untuk mendigitalkan alur kerja Puskesmas.
 
 ![Dashboard Preview](docs/screenshot-dashboard.png)
-*(Pastikan kamu upload screenshot aplikasi ke folder docs/screenshot-dashboard.png)*
+
 
 ---
 
@@ -36,6 +36,11 @@ Aplikasi ini mencakup modul-modul berikut sesuai *Use Case Scenario*:
 * **💊 Modul Farmasi & Obat**
     * Master Data Obat & Stok.
     * Penerimaan Resep dari Dokter & Konfirmasi Penyerahan Obat.
+
+* **📊 Modul Kepala Puskesmas**
+    * Laporan Kunjungan per Poli.
+    * Laporan 10 Penyakit Terbanyak.
+    * Laporan Pemakaian Obat.
 
 ---
 
@@ -87,7 +92,11 @@ http://localhost:8000
 | --- | --- | --- | --- |
 | Admin | admin | password123 | Mengelola User & Master Data (Poli/Obat) |
 | Pendaftaran | pendaftaran | password123 | Mendaftarkan Pasien & Kasir Pembayaran |
-| Dokter | dokter_umum, dokter_gigi, dokter_kia, dokter_lansia, dokter_tb | password123 | Memeriksa Pasien |
+| Dokter | dokter_umum | password123 | Memeriksa Pasien (Poli Umum) |
+| Dokter | dokter_gigi | password123 | Memeriksa Pasien (Poli Gigi) |
+| Dokter | dokter_kia | password123 | Memeriksa Pasien (Poli KIA) |
+| Dokter | dokter_lansia | password123 | Memeriksa Pasien (Poli Lansia) |
+| Dokter | dokter_tb | password123 | Memeriksa Pasien (Poli TB) |
 | Apoteker | apoteker | password123 | Mengelola Stok & Resep Obat |
 | Kepala | kepala | password123 | Melihat Laporan Kunjungan |
 

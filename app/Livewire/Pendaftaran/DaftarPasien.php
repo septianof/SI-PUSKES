@@ -313,9 +313,14 @@ class DaftarPasien extends Component
 
             // BPJS patient - No additional claims record needed
 
+            // Calculate nomor antrean based on today's visits for this poli
+            $antreanHariIni = Kunjungan::where('poli_id', $this->poli_id)
+                ->whereDate('tgl_kunjungan', today())
+                ->count();
+
             // Set status berhasil
             $this->kunjunganBerhasil = true;
-            $this->noAntrean = $kunjungan->id; // Bisa diganti dengan format nomor antrean custom
+            $this->noAntrean = $antreanHariIni; // Nomor urut hari ini per poli
 
             // Flash success message
             session()->flash('success', 'Pendaftaran kunjungan berhasil! Nomor Antrean: '.$this->noAntrean);

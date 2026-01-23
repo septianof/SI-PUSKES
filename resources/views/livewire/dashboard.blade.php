@@ -54,24 +54,31 @@
             @endforeach
         </div>
 
-        <!-- 3. Grafik Kunjungan (Visual Placeholder CSS Only) - General for All Roles -->
+        <!-- 3. Grafik Kunjungan (Real Data) - General for All Roles -->
         <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-lg font-bold text-gray-800">Grafik Aktivitas Mingguan</h3>
-                <select class="text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                    <option>7 Hari Terakhir</option>
-                    <option>Bulan Ini</option>
+                <select wire:model.live="chartPeriod" class="text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                    <option value="7days">7 Hari Terakhir</option>
+                    <option value="1month">Bulan Ini</option>
                 </select>
             </div>
             <div class="p-8">
-                <!-- Simple CSS Bar Chart -->
+                <!-- Real Data Bar Chart -->
                 <div class="flex items-end justify-between h-64 w-full gap-4 text-center">
-                    @foreach(['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'] as $day)
-                        @php $height = rand(20, 90); @endphp
+                    @foreach($chartData as $item)
+                        @php 
+                            $maxValue = collect($chartData)->max('value');
+                            $height = $maxValue > 0 ? ($item['value'] / $maxValue * 100) : 0;
+                        @endphp
                         <div class="flex-1 flex flex-col justify-end gap-2 group">
-                            <div class="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity font-bold">{{ $height }}</div>
+                            <div class="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+                                {{ $item['value'] }} kunjungan
+                                <br>
+                                <span class="text-gray-400">{{ $item['date'] }}</span>
+                            </div>
                             <div class="bg-blue-100 hover:bg-blue-500 transition-colors rounded-t-lg w-full" style="height: {{ $height }}%;"></div>
-                            <div class="text-xs text-gray-500">{{ $day }}</div>
+                            <div class="text-xs text-gray-500 font-medium">{{ $item['label'] }}</div>
                         </div>
                     @endforeach
                 </div>
