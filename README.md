@@ -58,46 +58,86 @@ Aplikasi ini mencakup modul-modul berikut sesuai *Use Case Scenario*:
 
 Pastikan di komputer Anda sudah terinstall **Docker Desktop** dan statusnya *Running*.
 
-### 1. Clone Repository
+### 1️⃣ Clone Repository
 ```bash
-git clone [https://github.com/septianof/si-puskes.git](https://github.com/septianof/si-puskes.git)
+git clone https://github.com/septianof/si-puskes.git
 cd si-puskes
+```
 
-### 2. Clone Repository
+### 2️⃣ Copy Environment File
+```bash
 cp .env.example .env
+```
 
-### 3. Jalankan Container (Build)
+### 3️⃣ Jalankan Docker Container
+```bash
 docker compose up -d
+```
 
-### 4. Install Dependency & Database
-# Install Paket PHP & Frontend
+> **Note:** Pastikan Docker Desktop sudah running sebelum menjalankan perintah ini.
+
+### 4️⃣ Install Dependencies
+```bash
+# Install PHP Dependencies
 docker compose exec laravel.test composer install
+
+# Install Node Dependencies
 docker compose exec laravel.test npm install
 
-# Build Aset CSS (Tailwind)
+# Build Frontend Assets (Tailwind CSS)
 docker compose exec laravel.test npm run build
+```
+
+### 5️⃣ Setup Database
+```bash
+# Generate Application Key
+docker compose exec laravel.test php artisan key:generate
 
 # Migrasi Database & Seeding Data Dummy
 docker compose exec laravel.test php artisan migrate:fresh --seed
+```
 
-### 5. Akses Aplikasi
-run docker
-docker compose up -d
+### 6️⃣ Akses Aplikasi
 
-Buka browser dan akses alamat berikut:
-http://localhost:8000
+Buka browser dan akses:
+```
+http://localhost
+```
 
-### 6. Akun Demo (Login)
-| Role | Username | Password | Deskripsi Tugas |
-| --- | --- | --- | --- |
-| Admin | admin | password123 | Mengelola User & Master Data (Poli/Obat) |
-| Pendaftaran | pendaftaran | password123 | Mendaftarkan Pasien & Kasir Pembayaran |
-| Dokter | dokter_umum | password123 | Memeriksa Pasien (Poli Umum) |
-| Dokter | dokter_gigi | password123 | Memeriksa Pasien (Poli Gigi) |
-| Dokter | dokter_kia | password123 | Memeriksa Pasien (Poli KIA) |
-| Dokter | dokter_lansia | password123 | Memeriksa Pasien (Poli Lansia) |
-| Dokter | dokter_tb | password123 | Memeriksa Pasien (Poli TB) |
-| Apoteker | apoteker | password123 | Mengelola Stok & Resep Obat |
-| Kepala | kepala | password123 | Melihat Laporan Kunjungan |
+---
 
-Untuk lebih jelasnya bisa dilihatdi file database/seeders/UserSeeder.php
+## 🔐 Akun Demo (Login)
+
+Gunakan kredensial berikut untuk login sesuai role yang ingin dicoba:
+
+| Role | Username | Password | Deskripsi |
+|------|----------|----------|-----------|
+| **Admin** | `admin` | `password123` | Mengelola User & Master Data (Poli/Obat) |
+| **Pendaftaran** | `pendaftaran` | `password123` | Mendaftarkan Pasien & Kasir Pembayaran |
+| **Dokter Umum** | `dokter_umum` | `password123` | Pemeriksaan Poli Umum |
+| **Dokter Gigi** | `dokter_gigi` | `password123` | Pemeriksaan Poli Gigi |
+| **Dokter KIA** | `dokter_kia` | `password123` | Pemeriksaan Poli KIA |
+| **Dokter Lansia** | `dokter_lansia` | `password123` | Pemeriksaan Poli Lansia |
+| **Dokter TB** | `dokter_tb` | `password123` | Pemeriksaan Poli TB |
+| **Apoteker** | `apoteker` | `password123` | Mengelola Stok & Resep Obat |
+| **Kepala Puskesmas** | `kepala` | `password123` | Melihat Laporan & Dashboard |
+
+> **💡 Info:** Lihat file [`database/seeders/UserSeeder.php`](database/seeders/UserSeeder.php) untuk detail lengkap akun seeder.
+
+---
+
+## 🔄 Perintah Berguna
+
+```bash
+# Stop container
+docker compose down
+
+# Restart container
+docker compose restart
+
+# Lihat logs
+docker compose logs -f laravel.test
+
+# Akses shell container
+docker compose exec laravel.test bash
+```
