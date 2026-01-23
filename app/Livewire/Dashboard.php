@@ -61,13 +61,6 @@ class Dashboard extends Component
             case 'pendaftaran':
                 return [
                     [
-                        'label' => 'Antrean Menunggu',
-                        'value' => 0, // Kunjungan::where('status', 'waiting')->count()
-                        'icon' => 'user-group',
-                        'color' => 'blue',
-                        'subtext' => 'Perlu diproses',
-                    ],
-                    [
                         'label' => 'Pasien Baru',
                         'value' => 0, // Pasien::whereDate('created_at', today())->count()
                         'icon' => 'user-plus',
@@ -76,10 +69,17 @@ class Dashboard extends Component
                     ],
                     [
                         'label' => 'Selesai',
-                        'value' => 0, // Kunjungan::where('status', 'finished')->count()
+                        'value' => 0, // Kunjungan::where('status', 'selesai')->count()
                         'icon' => 'check-circle',
                         'color' => 'purple',
                         'subtext' => 'Hari ini',
+                    ],
+                    [
+                        'label' => 'Antrean Bayar',
+                        'value' => 0, // Kunjungan::where('status', 'bayar')->count()
+                        'icon' => 'user-group',
+                        'color' => 'blue',
+                        'subtext' => 'Perlu diproses',
                     ],
                 ];
 
@@ -99,7 +99,7 @@ class Dashboard extends Component
                     ],
                     [
                         'label' => 'Selesai Periksa',
-                        'value' => 0, // TODO: Will be implemented when rekam medis module is done
+                        'value' => 0, // yang statusnnya bayar dan obat
                         'icon' => 'clipboard-document-check',
                         'color' => 'green',
                         'subtext' => 'Hari ini',
@@ -119,7 +119,7 @@ class Dashboard extends Component
                 return [
                     [
                         'label' => 'Resep Masuk',
-                        'value' => 0, // Resep::where('status', 'waiting')->count()
+                        'value' => 0, // Resep::where('status', 'obat')->count()
                         'icon' => 'document-text',
                         'color' => 'red', // Merah biar notice
                         'subtext' => 'Perlu disiapkan',
